@@ -1,46 +1,34 @@
-# Getting Started with Create React App
+# TRACT Coding Challenge
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Background
 
-## Available Scripts
+The main goal of interviews at TRACT is to find a good fit. We hope that you will enjoy working with us and be able to perform your best work in our environment! To this end, our interviews are not filled with gotchas and brainteasers, but attempt to let us work together in well-reasoned scenarios that mimic a collaborative environment.
 
-In the project directory, you can run:
+## The Challenge
 
-### `npm start`
+Georgie is a manager of a tomato distributor. Her company buys tomatoes and sells them on the market. Most of the time, tomatoes are bought from suppliers and sold on the market. However, sometimes tomato farms become contaminated, and tomatoes purchased from those farms can no longer be sold.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Georgie's boss asked her to build an app to summarize the business. She started by using [Tail Admin](https://tailadmin.com/) and [Create React App](https://create-react-app.dev/), and created several screens with lists of suppliers and orders, and summaries of revenue, but quickly ran into trouble. 
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Your Goal
 
-### `npm test`
+Georgie needs help to make progress on the app. You can decide on area(s) to focus on, and can augment or create new pages. Use your judgement and imagination! Here are some examples of things you could focus on:
+- Improving the handling and calculation of revenue
+- Identifying and estimating impact of contamination
+- Adding thousands of rows to the tables and improving performance
+- Fixing typescript errors and other bugs/issues
+- Or choose your own direction!
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## The Interview Format
 
-### `npm run build`
+You will pair with an interviewer who will observe you code through your solutions. The interviewer may ask questions or offer suggestions, but you will be guiding the direction of the work. You may use any reference materials (StackOverflow, Copilot, etc.) and tools that you use in your normal course of work. We believe that the best engineers will use references when needed, but have enough mastery of basic syntax, skills and best practices that they can work independently to a large measure. The main point is that we want you to feel comfortable and enjoy the interview, using your normal workflow!
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Prep Work
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Please fork this repo and look through the code before your interview. You should also have an idea of areas of the code you will want to work on during the interview, so that we don't spend time during the interview trying to find work rather than coding.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+While not required, it may help you to spend a few minutes coding in the project to see how it works. You may make any changes you'd like, including adding new packages or adding to or removing current code.
 
-### `npm run eject`
+Just run `npm install && npm start` and you'll be on your way!
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+See you in the interview!
