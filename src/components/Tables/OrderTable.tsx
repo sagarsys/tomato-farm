@@ -46,7 +46,7 @@ const OrderTable = ({ data }: { data: iOrder[] }) => {
                       className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium ${
                         order.status === 'received'
                           ? 'bg-success text-success'
-                          : order.status === 'Unpaid'
+                          : order.status === 'overdue'
                           ? 'bg-danger text-danger'
                           : 'bg-warning text-warning'
                       }`}

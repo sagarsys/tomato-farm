@@ -30,6 +30,7 @@ export const farmData = [
     city: "London",
     country: "United Kingdom",
     name: "Beautiful Farm",
+    contamination: true,
   }, {
     id: 7,
     city: "Lisbon",
@@ -89,7 +90,6 @@ export const orderData = [
     farmId: 7,
     date: "2022-08-22",
     quantity: 1000,
-    status: 'contaminated',
   }, {
     id: 8,
     farmId: 7,
