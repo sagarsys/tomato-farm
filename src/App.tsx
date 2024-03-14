@@ -11,7 +11,7 @@ import Settings from './pages/Settings';
 import Farms from './pages/Farms';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
-import Sales from './pages/Sales';
+import Orders from './pages/Orders';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -58,11 +58,11 @@ function App() {
           }
         />
         <Route
-          path="/sales"
+          path="/orders"
           element={
             <>
-              <PageTitle title="Sales" />
-              <Sales />
+              <PageTitle title="Orders" />
+              <Orders />
             </>
           }
         />

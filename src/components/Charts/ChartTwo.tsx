@@ -1,6 +1,7 @@
 import { ApexOptions } from 'apexcharts';
 import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
+import { orderData } from '../../data';
 
 const options: ApexOptions = {
   colors: ['#3C50E0', '#80CAEE'],
@@ -69,16 +70,25 @@ interface ChartTwoState {
   }[];
 }
 
+const costs = orderData.reduce((acc, order) => {
+  const orderDay = (new Date(order.date)).getDay();
+  acc[orderDay] += order.quantity * 0.25;
+
+  return acc;
+}, new Array(7).fill(0));
+
+const revenues = costs.map((cost) => Math.round((cost + 200) * (1 + Math.random())));
+
 const ChartTwo: React.FC = () => {
   const [state, setState] = useState<ChartTwoState>({
     series: [
       {
-        name: 'Sales',
-        data: [44, 55, 41, 67, 22, 43, 65],
+        name: 'Cost',
+        data: costs,
       },
       {
         name: 'Revenue',
-        data: [13, 23, 20, 8, 13, 27, 15],
+        data: revenues,
       },
     ],
   });

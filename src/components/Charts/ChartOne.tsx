@@ -1,6 +1,7 @@
 import { ApexOptions } from 'apexcharts';
 import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
+import { orderData } from '../../data';
 
 const options: ApexOptions = {
   legend: {
@@ -111,7 +112,6 @@ const options: ApexOptions = {
       },
     },
     min: 0,
-    max: 100,
   },
 };
 
@@ -122,17 +122,26 @@ interface ChartOneState {
   }[];
 }
 
+const costs = orderData.reduce((acc, order) => {
+  const orderMonth = (new Date(order.date)).getMonth();
+  acc[orderMonth] += order.quantity * 0.25;
+
+  return acc;
+}, new Array(12).fill(0));
+
+const revenues = costs.map((cost) => Math.round((cost + 200) * (1 + Math.random())));
+
 const ChartOne: React.FC = () => {
   const [state, setState] = useState<ChartOneState>({
     series: [
       {
-        name: 'Product One',
-        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 45],
+        name: 'Cost',
+        data: costs,
       },
 
       {
-        name: 'Product Two',
-        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51],
+        name: 'Revenue',
+        data: revenues,
       },
     ],
   });
@@ -153,7 +162,7 @@ const ChartOne: React.FC = () => {
               <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-primary"></span>
             </span>
             <div className="w-full">
-              <p className="font-semibold text-primary">Total Revenue</p>
+              <p className="font-semibold text-primary">Total Sales</p>
               <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
             </div>
           </div>
@@ -162,7 +171,7 @@ const ChartOne: React.FC = () => {
               <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondary"></span>
             </span>
             <div className="w-full">
-              <p className="font-semibold text-secondary">Total Sales</p>
+              <p className="font-semibold text-secondary">Total Costs</p>
               <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
             </div>
           </div>
