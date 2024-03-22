@@ -1,124 +1,95 @@
 import { ApexOptions } from 'apexcharts';
 import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
-import { orderData } from '../../data';
+import { orderData, farmData } from '../../data';
+
+interface SupplierDonutChartState {
+  series: number[];
+}
+
+const supplierSummaries = orderData.reduce((acc, order) => {
+  acc[order.farmId - 1] += order.quantity;
+
+  return acc;
+}, new Array(farmData.length).fill(0));
 
 const options: ApexOptions = {
-  colors: ['#3C50E0', '#80CAEE'],
   chart: {
     fontFamily: 'Satoshi, sans-serif',
-    type: 'bar',
-    height: 335,
-    stacked: true,
-    toolbar: {
-      show: false,
-    },
-    zoom: {
-      enabled: false,
-    },
+    type: 'donut',
+  },
+  labels: supplierSummaries.map((_, index) => farmData[index].name),
+  legend: {
+    position: 'bottom',
   },
 
-  responsive: [
-    {
-      breakpoint: 1536,
-      options: {
-        plotOptions: {
-          bar: {
-            borderRadius: 0,
-            columnWidth: '25%',
-          },
-        },
-      },
-    },
-  ],
   plotOptions: {
-    bar: {
-      horizontal: false,
-      borderRadius: 0,
-      columnWidth: '25%',
-      borderRadiusApplication: 'end',
-      borderRadiusWhenStacked: 'last',
+    pie: {
+      donut: {
+        size: '65%',
+        background: 'transparent',
+      },
     },
   },
   dataLabels: {
     enabled: false,
   },
-
-  xaxis: {
-    categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-  },
-  legend: {
-    position: 'top',
-    horizontalAlign: 'left',
-    fontFamily: 'Satoshi',
-    fontWeight: 500,
-    fontSize: '14px',
-
-    markers: {
-      radius: 99,
+  responsive: [
+    {
+      breakpoint: 2600,
+      options: {
+        chart: {
+          width: 380,
+        },
+      },
     },
-  },
-  fill: {
-    opacity: 1,
-  },
+    {
+      breakpoint: 640,
+      options: {
+        chart: {
+          width: 200,
+        },
+      },
+    },
+  ],
 };
 
-interface ChartTwoState {
-  series: {
-    name: string;
-    data: number[];
-  }[];
-}
-
-const costs = orderData.reduce((acc, order) => {
-  const orderDay = (new Date(order.date)).getDay();
-  acc[orderDay] += order.quantity * 0.25;
-
-  return acc;
-}, new Array(7).fill(0));
-
-const revenues = costs.map((cost) => Math.round((cost + 200) * (1 + Math.random())));
-
-const ChartTwo: React.FC = () => {
-  const [state, setState] = useState<ChartTwoState>({
-    series: [
-      {
-        name: 'Cost',
-        data: costs,
-      },
-      {
-        name: 'Revenue',
-        data: revenues,
-      },
-    ],
+const SupplierDonutChart: React.FC = () => {
+  const [state, setState] = useState<SupplierDonutChartState>({
+    series: supplierSummaries,
   });
-  
+
   const handleReset = () => {
     setState((prevState) => ({
       ...prevState,
+      series: supplierSummaries,
     }));
   };
-  handleReset;  // eslint-disable-line
+  handleReset; // eslint-disable-line
 
   return (
-    <div className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
-      <div className="mb-4 justify-between gap-4 sm:flex">
+    <div className="sm:px-7.5 col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-5">
+      <div className="mb-3 justify-between gap-4 sm:flex">
         <div>
-          <h4 className="text-xl font-semibold text-black dark:text-white">
-            Profit this week
-          </h4>
+          <h5 className="text-xl font-semibold text-black dark:text-white">
+            Suppliers
+          </h5>
         </div>
         <div>
           <div className="relative z-20 inline-block">
             <select
-              name="#"
-              id="#"
+              name=""
+              id=""
               className="relative z-20 inline-flex appearance-none bg-transparent py-1 pl-3 pr-8 text-sm font-medium outline-none"
             >
-              <option value="" className='dark:bg-boxdark'>This Week</option>
-              <option value="" className='dark:bg-boxdark'>Last Week</option>
+              <option value="" className="dark:bg-boxdark">
+                Monthly
+              </option>
+              <option value="" className="dark:bg-boxdark">
+                Yearly
+              </option>
             </select>
-            <span className="absolute top-1/2 right-3 z-10 -translate-y-1/2">
+            <span className="absolute right-3 top-1/2 z-10 -translate-y-1/2">
               <svg
                 width="10"
                 height="6"
@@ -142,13 +113,12 @@ const ChartTwo: React.FC = () => {
         </div>
       </div>
 
-      <div>
-        <div id="chartTwo" className="-ml-5 -mb-9">
+      <div className="mb-2">
+        <div id="SupplierDonutChart" className="mx-auto flex justify-center">
           <ReactApexChart
             options={options}
             series={state.series}
-            type="bar"
-            height={350}
+            type="donut"
           />
         </div>
       </div>
@@ -156,4 +126,4 @@ const ChartTwo: React.FC = () => {
   );
 };
 
-export default ChartTwo;
+export default SupplierDonutChart;

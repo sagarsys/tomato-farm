@@ -3,7 +3,6 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 
 import Loader from './common/Loader';
 import PageTitle from './components/PageTitle';
-import Chart from './pages/Chart';
 import Dashboard from './pages/Dashboard';
 import FormElements from './pages/Form/FormElements';
 import FormLayout from './pages/Form/FormLayout';
@@ -81,15 +80,6 @@ function App() {
             <>
               <PageTitle title="Settings" />
               <Settings />
-            </>
-          }
-        />
-        <Route
-          path="/chart"
-          element={
-            <>
-              <PageTitle title="Basic Chart" />
-              <Chart />
             </>
           }
         />

@@ -115,7 +115,7 @@ const options: ApexOptions = {
   },
 };
 
-interface ChartOneState {
+interface RevenueCostAreaChartState {
   series: {
     name: string;
     data: number[];
@@ -131,8 +131,8 @@ const costs = orderData.reduce((acc, order) => {
 
 const revenues = costs.map((cost) => Math.round((cost + 200) * (1 + Math.random())));
 
-const ChartOne: React.FC = () => {
-  const [state, setState] = useState<ChartOneState>({
+const RevenueCostAreaChart: React.FC = () => {
+  const [state, setState] = useState<RevenueCostAreaChartState>({
     series: [
       {
         name: 'Cost',
@@ -145,13 +145,6 @@ const ChartOne: React.FC = () => {
       },
     ],
   });
-
-  const handleReset = () => {
-    setState((prevState) => ({
-      ...prevState,
-    }));
-  };
-  handleReset; // eslint-disable-line
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8">
@@ -192,7 +185,7 @@ const ChartOne: React.FC = () => {
       </div>
 
       <div>
-        <div id="chartOne" className="-ml-5">
+        <div id="RevenueCostAreaChart" className="-ml-5">
           <ReactApexChart
             options={options}
             series={state.series}
@@ -205,4 +198,4 @@ const ChartOne: React.FC = () => {
   );
 };
 
-export default ChartOne;
+export default RevenueCostAreaChart;
