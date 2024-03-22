@@ -3,10 +3,10 @@ import 'jsvectormap/dist/css/jsvectormap.css';
 import { useEffect } from 'react';
 import '../../js/world';
 
-const MapOne = () => {
+const WorldMap = () => {
   useEffect(() => {
-    const mapOne = new jsVectorMap({
-      selector: '#mapOne',
+    const worldMap = new jsVectorMap({
+      selector: '#worldMap',
       map: 'world',
       zoomButtons: true,
 
@@ -38,7 +38,7 @@ const MapOne = () => {
         },
       },
     });
-    mapOne; // eslint-disable-line
+    worldMap; // eslint-disable-line
   });
 
   return (
@@ -46,9 +46,9 @@ const MapOne = () => {
       <h4 className="mb-2 text-xl font-semibold text-black dark:text-white">
         Supply Chains
       </h4>
-      <div id="mapOne" className="mapOne map-btn h-90"></div>
+      <div id="worldMap" className="worldMap map-btn h-90"></div>
     </div>
   );
 };
 
-export default MapOne;
+export default WorldMap;

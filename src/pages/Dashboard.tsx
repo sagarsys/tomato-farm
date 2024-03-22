@@ -2,7 +2,7 @@ import React from 'react';
 import RevenueCostAreaChart from '../components/Charts/RevenueCostAreaChart';
 import SupplierDonutChart from '../components/Charts/SupplierDonutChart';
 import ProfitBarChart from '../components/Charts/ProfitBarChart';
-import MapOne from '../components/Maps/MapOne';
+import WorldMap from '../components/Maps/WorldMap';
 import DefaultLayout from '../layout/DefaultLayout';
 
 const ECommerce: React.FC = () => {
@@ -12,7 +12,7 @@ const ECommerce: React.FC = () => {
         <RevenueCostAreaChart />
         <ProfitBarChart />
         <SupplierDonutChart />
-        <MapOne />
+        <WorldMap />
       </div>
     </DefaultLayout>
   );

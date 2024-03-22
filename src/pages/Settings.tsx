@@ -1,4 +1,4 @@
-import userThree from '../images/user/user-03.png';
+import UserImage from '../images/user.png';
 import DefaultLayout from '../layout/DefaultLayout';
 
 const Settings = () => {
@@ -218,7 +218,7 @@ const Settings = () => {
                 <form action="#">
                   <div className="mb-4 flex items-center gap-3">
                     <div className="h-14 w-14 rounded-full">
-                      <img src={userThree} alt="User" />
+                      <img src={UserImage} alt="User" />
                     </div>
                     <div>
                       <span className="mb-1.5 text-black dark:text-white">
