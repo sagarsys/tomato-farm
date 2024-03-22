@@ -3,4 +3,5 @@ export type iOrder = {
   farmId: number;
   date: string;
   quantity: number;
+  status?: string;
 };
