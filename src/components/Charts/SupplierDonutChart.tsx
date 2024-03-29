@@ -8,7 +8,7 @@ interface SupplierDonutChartState {
 }
 
 const supplierSummaries = orderData.reduce((acc, order) => {
-  acc[order.farmId - 1] += order.quantity;
+  acc[order.farm_id - 1] += order.quantity;
 
   return acc;
 }, new Array(farmData.length).fill(0));

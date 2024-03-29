@@ -32,7 +32,7 @@ const FarmTable = ({ data }) => {
         </div>
 
         {orderData.map((order: iOrder, key: number) => {
-          const farmName = farmData.find((farm: iFarm) => farm.id === order.farmId)?.name;
+          const farmName = farmData.find((farm: iFarm) => farm.id === order.farm_id)?.name;
           return (
             <div
               className={`grid grid-cols-3 sm:grid-cols-5 ${
