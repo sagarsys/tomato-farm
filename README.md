@@ -8,11 +8,12 @@ The main goal of interviews at TRACT is to find a good fit. We hope that you wil
 
 Georgie is a manager of a tomato distributor. Her company buys tomatoes and sells them on the market. Most of the time, tomatoes are bought from suppliers and sold on the market. However, sometimes tomato farms become contaminated, and tomatoes purchased from those farms can no longer be sold.
 
-Georgie's boss asked her to build an app to summarize the business. She started by using [Tail Admin](https://tailadmin.com/) and [Create React App](https://create-react-app.dev/), and created several screens with lists of suppliers and orders, and summaries of revenue, but quickly ran into trouble. 
+Georgie's boss asked her to build an app to summarize the business. She started by using [Shadcn](https://ui.shadcn.com/) and [React](https://react.dev/) with [Rsbuild](https://rsbuild.dev/), and created several screens with lists of suppliers and orders, and summaries of revenue, but quickly ran into trouble.
 
 ## Your Goal
 
 Georgie needs help to make progress on the app. You can decide on area(s) to focus on, and can augment or create new pages. Use your judgement and imagination! Here are some examples of things you could focus on:
+
 - Improving the handling and calculation of revenue
 - Identifying and estimating impact of contamination
 - Adding thousands of rows to the tables and improving performance
