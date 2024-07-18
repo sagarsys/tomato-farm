@@ -1,16 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 
-import Loader from './common/Loader';
-import PageTitle from './components/PageTitle';
-import Dashboard from './pages/Dashboard';
-import FormElements from './pages/Form/FormElements';
-import FormLayout from './pages/Form/FormLayout';
-import Settings from './pages/Settings';
-import Farms from './pages/Farms';
-import Alerts from './pages/UiElements/Alerts';
-import Buttons from './pages/UiElements/Buttons';
-import Orders from './pages/Orders';
+import Loader from "./common/Loader";
+import { Dashboard } from "./pages/Dashboard";
+import Farms from "./pages/Farms";
+import Orders from "./pages/Orders";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,35 +27,7 @@ function App() {
           index
           element={
             <>
-              <PageTitle title="Dashboard" />
               <Dashboard />
-            </>
-          }
-        />
-        <Route
-          path="/forms/form-elements"
-          element={
-            <>
-              <PageTitle title="Form Elements" />
-              <FormElements />
-            </>
-          }
-        />
-        <Route
-          path="/forms/form-layout"
-          element={
-            <>
-              <PageTitle title="Form Layout" />
-              <FormLayout />
-            </>
-          }
-        />
-        <Route
-          path="/orders"
-          element={
-            <>
-              <PageTitle title="Orders" />
-              <Orders />
             </>
           }
         />
@@ -69,35 +35,15 @@ function App() {
           path="/farms"
           element={
             <>
-              <PageTitle title="Farms" />
               <Farms />
             </>
           }
         />
         <Route
-          path="/settings"
+          path="/orders"
           element={
             <>
-              <PageTitle title="Settings" />
-              <Settings />
-            </>
-          }
-        />
-        <Route
-          path="/ui/alerts"
-          element={
-            <>
-              <PageTitle title="Alerts" />
-              <Alerts />
-            </>
-          }
-        />
-        <Route
-          path="/ui/buttons"
-          element={
-            <>
-              <PageTitle title="Buttons" />
-              <Buttons />
+              <Orders />
             </>
           }
         />
