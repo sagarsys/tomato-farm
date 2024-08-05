@@ -18,20 +18,26 @@ import { CircleUser, Menu, Search } from "lucide-react";
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-        <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 bg-white z-50">
+        <nav className="hidden  w-full  flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <Link
             to="/"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
             <Logo className="w-32" />
-            <span className="sr-only">Acme Inc</span>
+            <span className="sr-only">Tract B.V</span>
           </Link>
           <Link
             to="/"
             className="text-foreground transition-colors hover:text-foreground"
           >
             Dashboard
+          </Link>
+          <Link
+            to="/supply-chain"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Supply Chain
           </Link>
           <Link
             to="/farms"
@@ -64,10 +70,15 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
                 className="flex items-center gap-2 text-lg font-semibold"
               >
                 <Logo className="w-32" />
-                <span className="sr-only">Acme Inc</span>
               </Link>
               <Link to="/" className="hover:text-foreground">
                 Dashboard
+              </Link>
+              <Link
+                to="/supply-chain"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Supply Chain
               </Link>
               <Link
                 to="/farms"
@@ -84,7 +95,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
             </nav>
           </SheetContent>
         </Sheet>
-        <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <form className="ml-auto flex-1 sm:flex-initial">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
