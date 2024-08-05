@@ -33,55 +33,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DefaultLayout from "../layout/DefaultLayout";
+import { Farm } from "../data/types";
+import Loader from "../common/Loader";
+import { useQuery } from "@tanstack/react-query";
+import { farms } from "../data/mockData";
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    city: "London",
-    country: "United Kingdom",
-    name: "Beautiful Farm",
-    volume: 316,
-  },
-  {
-    id: "3u1reuv4",
-    city: "Lisbon",
-    country: "Portugal",
-    name: "Fazenda Bonita",
-    volume: 242,
-  },
-  {
-    id: "derv1ws0",
-    city: "Barcelona",
-    country: "Spain",
-    name: "Granja Hermosa",
-    volume: 837,
-  },
-  {
-    id: "5kma53ae",
-    city: "Lviv",
-    country: "Ukraine",
-    name: "Гарна ферма",
-    volume: 874,
-  },
-  {
-    id: "bhqecj4p",
-    city: "Athens",
-    country: "Greece",
-    name: "Όμορφη φάρμα",
-    volume: 721,
-  },
-];
-
-export type Payment = {
-  id: string;
-  volume: number;
-  country: string;
-  city: string;
-  name: string;
-};
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Farm>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -105,34 +62,29 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "id",
+    header: "ID",
+    cell: ({ row }) => <div>{row.getValue("id")}</div>,
+  },
+  {
     accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("name")}</div>
-    ),
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "city",
     header: "City",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("city")}</div>
-    ),
-  },
-  {
-    accessorKey: "country",
-    header: "Country",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("country")}</div>
-    ),
-  },
-  {
-    accessorKey: "volume",
-    header: () => <div className="text-right">Volume</div>,
-    cell: ({ row }) => {
-      const volume = parseFloat(row.getValue("volume"));
-
-      return <div className="text-right font-medium">{volume} Kg</div>;
-    },
+    cell: ({ row }) => <div className="capitalize">{row.getValue("city")}</div>,
   },
   {
     id: "actions",
@@ -155,8 +107,6 @@ export const columns: ColumnDef<Payment>[] = [
             >
               Copy farm ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View orders</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -165,6 +115,17 @@ export const columns: ColumnDef<Payment>[] = [
 ];
 
 const Farms = () => {
+  const {
+    data = [],
+    isPending,
+    isError,
+  } = useQuery<Farm[]>({
+    queryKey: ["farms"],
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      return farms;
+    },
+  });
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -192,8 +153,12 @@ const Farms = () => {
     },
   });
 
+  if (isPending) {
+    return <Loader />;
+  }
+
   return (
-    <DefaultLayout>
+    <>
       <div className="w-full">
         <div className="flex items-center py-4">
           <Input
@@ -306,7 +271,7 @@ const Farms = () => {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </>
   );
 };
 

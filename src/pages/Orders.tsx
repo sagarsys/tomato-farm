@@ -1,6 +1,5 @@
-"use client";
+import { FaPlus } from "react-icons/fa";
 
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -16,110 +15,99 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DefaultLayout from "../layout/DefaultLayout";
-
-export const ordersData = [
-  {
-    id: 1,
-    farm_id: 1,
-    date: "2021-03-15",
-    quantity: 1020,
-  }, {
-    id: 2,
-    farm_id: 3,
-    date: "2021-01-02",
-    quantity: 2200,
-  }, {
-    id: 3,
-    farm_id: 2,
-    date: "2021-02-25",
-    quantity: 800,
-  }, {
-    id: 4,
-    farm_id: 4,
-    date: "2023-03-15",
-    quantity: 1200,
-  }, {
-    id: 5,
-    farm_id: 5,
-    date: "2020-07-11",
-    quantity: 1500,
-  }, {
-    id: 6,
-    farm_id: 5,
-    date: "2021-06-13",
-    quantity: 2000,
-  }, {
-    id: 7,
-    farm_id: 7,
-    date: "2022-08-22",
-    quantity: 1000,
-  }, {
-    id: 8,
-    farm_id: 7,
-    date: "2023-10-25",
-    quantity: 1500,
-  }, {
-    id: 9,
-    farm_id: 9,
-    date: "2021-11-05",
-    quantity: 1800,
-  }, {
-    id: 10,
-    farm_id: 10,
-    date: "2020-12-09",
-    quantity: 2200,
-    status: 'received',
-  }, {
-    id: 11,
-    farm_id: 6,
-    date: "2022-01-02",
-    quantity: 1400,
-  }, {
-    id: 12,
-    farm_id: 8,
-    date: "2023-03-15",
-    quantity: 1200,
-  }, {
-    id: 13,
-    farm_id: 8,
-    date: "2021-06-13",
-    quantity: 2000,
-  }, {
-    id: 14,
-    farm_id: 6,
-    date: "2022-08-22",
-    quantity: 1000,
-  }, {
-    id: 15,
-    farm_id: 10,
-    date: "2023-10-25",
-    quantity: 1500,
-  }, {
-    id: 16,
-    farm_id: 9,
-    date: "2021-11-05",
-    quantity: 1800,
-  }, {
-    id: 17,
-    farm_id: 4,
-    date: "2020-12-09",
-    quantity: 2200,
-  }, {
-    id: 18,
-    farm_id: 3,
-    date: "2022-01-02",
-    quantity: 1400,
-  }
-]
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { useState } from "react";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
 export default function Orders() {
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+
   return (
-    <DefaultLayout>
+    <>
+      <div className="flex gap-4 justify-between">
+        <div className="flex gap-4">
+          <Select>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Buy Orders" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="buy">Buy Orders</SelectItem>
+              <SelectItem value="sell">Sell Orders</SelectItem>
+            </SelectContent>
+          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-52 justify-start text-left font-normal",
+                  !startDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {startDate ? format(startDate, "PPP") : <span>Start date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={startDate}
+                onSelect={setStartDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-52 justify-start text-left font-normal",
+                  !endDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {endDate ? format(endDate, "PPP") : <span>End date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={endDate}
+                onSelect={setEndDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          <Button variant="outline">Filter</Button>
+        </div>
+        <Button variant="default" className="gap-2">
+          <FaPlus />
+          Create Order
+        </Button>
+      </div>
+
       <Card>
         <CardHeader className="px-7">
           <CardTitle>Orders</CardTitle>
-          <CardDescription>Recent orders from your store.</CardDescription>
+          <CardDescription>Total Revenue: $1000</CardDescription>
+          <CardDescription>Total Profit: $1000</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -144,6 +132,6 @@ export default function Orders() {
           </Table>
         </CardContent>
       </Card>
-    </DefaultLayout>
+    </>
   );
 }
