@@ -1,7 +1,7 @@
 import { FaPlus } from "react-icons/fa";
 import { useMemo, useState } from "react";
 import { format, isWithinInterval } from "date-fns";
-import { Calendar as CalendarIcon, AlertTriangle } from "lucide-react";
+import { Calendar as CalendarIcon, AlertTriangle, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 import {
   Card,
@@ -50,6 +50,9 @@ import Loader from "../common/Loader";
 
 type OrderType = "buy" | "sell";
 
+type SortColumn = "date" | "volume" | "cost" | "revenue" | "profit" | "store" | "farm" | "warehouse";
+type SortDirection = "asc" | "desc" | null;
+
 export default function Orders() {
   const [orderType, setOrderType] = useState<OrderType>("sell");
   const [startDate, setStartDate] = useState<Date>();
@@ -57,6 +60,8 @@ export default function Orders() {
   const [isFiltering, setIsFiltering] = useState(false);
   const [showOnlyContaminated, setShowOnlyContaminated] = useState(false);
   const [showOnlyClean, setShowOnlyClean] = useState(false);
+  const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
 
   // Fetch orders data
   const {
@@ -143,9 +148,110 @@ export default function Orders() {
     [filteredSellOrders]
   );
 
+  // Handle column sorting
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      // Cycle through: asc -> desc -> null
+      setSortDirection(
+        sortDirection === "asc" ? "desc" : sortDirection === "desc" ? null : "asc"
+      );
+      if (sortDirection === "desc") {
+        setSortColumn(null);
+      }
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  };
+
+  // Sort buy orders
+  const sortedBuyOrders = useMemo(() => {
+    if (!sortColumn || !sortDirection) return filteredBuyOrders;
+
+    return [...filteredBuyOrders].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortColumn) {
+        case "date":
+          aValue = a.date.getTime();
+          bValue = b.date.getTime();
+          break;
+        case "volume":
+          aValue = a.volume;
+          bValue = b.volume;
+          break;
+        case "cost":
+          aValue = a.volume * a.pricePerUnit;
+          bValue = b.volume * b.pricePerUnit;
+          break;
+        case "farm":
+          aValue = a.supplier.name.toLowerCase();
+          bValue = b.supplier.name.toLowerCase();
+          break;
+        case "warehouse":
+          aValue = a.destination.name.toLowerCase();
+          bValue = b.destination.name.toLowerCase();
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [filteredBuyOrders, sortColumn, sortDirection]);
+
+  // Sort sell orders
+  const sortedSellOrders = useMemo(() => {
+    if (!sortColumn || !sortDirection) return filteredSellOrders;
+
+    return [...filteredSellOrders].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      const aMetrics = calculateSellOrderMetrics(a);
+      const bMetrics = calculateSellOrderMetrics(b);
+
+      switch (sortColumn) {
+        case "date":
+          aValue = a.date.getTime();
+          bValue = b.date.getTime();
+          break;
+        case "volume":
+          aValue = aMetrics.totalVolume;
+          bValue = bMetrics.totalVolume;
+          break;
+        case "cost":
+          aValue = aMetrics.totalCost;
+          bValue = bMetrics.totalCost;
+          break;
+        case "revenue":
+          aValue = aMetrics.revenue;
+          bValue = bMetrics.revenue;
+          break;
+        case "profit":
+          aValue = aMetrics.profit;
+          bValue = bMetrics.profit;
+          break;
+        case "store":
+          aValue = a.destination.name.toLowerCase();
+          bValue = b.destination.name.toLowerCase();
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [filteredSellOrders, sortColumn, sortDirection]);
+
   // Display first 50 orders for performance
-  const displayedBuyOrders = filteredBuyOrders.slice(0, 50);
-  const displayedSellOrders = filteredSellOrders.slice(0, 50);
+  const displayedBuyOrders = sortedBuyOrders.slice(0, 50);
+  const displayedSellOrders = sortedSellOrders.slice(0, 50);
 
   const handleFilter = () => {
     setIsFiltering(true);
@@ -157,6 +263,17 @@ export default function Orders() {
     setIsFiltering(false);
     setShowOnlyContaminated(false);
     setShowOnlyClean(false);
+  };
+
+  // Render sort icon
+  const renderSortIcon = (column: SortColumn) => {
+    if (sortColumn !== column) {
+      return <ArrowUpDown className="ml-2 h-4 w-4" />;
+    }
+    if (sortDirection === "asc") {
+      return <ArrowUp className="ml-2 h-4 w-4" />;
+    }
+    return <ArrowDown className="ml-2 h-4 w-4" />;
   };
 
   if (isPending) {
@@ -308,12 +425,66 @@ export default function Orders() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Order ID</TableHead>
-                  <TableHead>Store</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Volume (kg)</TableHead>
-                  <TableHead className="text-right">Cost</TableHead>
-                  <TableHead className="text-right">Revenue</TableHead>
-                  <TableHead className="text-right">Profit</TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("store")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Store
+                      {renderSortIcon("store")}
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("date")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Date
+                      {renderSortIcon("date")}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("volume")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Volume (kg)
+                      {renderSortIcon("volume")}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("cost")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Cost
+                      {renderSortIcon("cost")}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("revenue")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Revenue
+                      {renderSortIcon("revenue")}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("profit")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Profit
+                      {renderSortIcon("profit")}
+                    </Button>
+                  </TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
@@ -395,12 +566,57 @@ export default function Orders() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Order ID</TableHead>
-                  <TableHead>Farm</TableHead>
-                  <TableHead>Warehouse</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Volume (kg)</TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("farm")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Farm
+                      {renderSortIcon("farm")}
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("warehouse")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Warehouse
+                      {renderSortIcon("warehouse")}
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("date")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Date
+                      {renderSortIcon("date")}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("volume")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Volume (kg)
+                      {renderSortIcon("volume")}
+                    </Button>
+                  </TableHead>
                   <TableHead className="text-right">Price/Unit</TableHead>
-                  <TableHead className="text-right">Total Cost</TableHead>
+                  <TableHead className="text-right">
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSort("cost")}
+                      className="h-8 p-0 font-medium"
+                    >
+                      Total Cost
+                      {renderSortIcon("cost")}
+                    </Button>
+                  </TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
