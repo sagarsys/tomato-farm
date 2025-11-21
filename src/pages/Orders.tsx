@@ -1,6 +1,5 @@
 import { FaPlus } from "react-icons/fa";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { format, isWithinInterval } from "date-fns";
 import { Calendar as CalendarIcon, AlertTriangle } from "lucide-react";
 
@@ -37,8 +36,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { buyOrders, sellOrders } from "../data/mockData";
-import { BuyOrder, SellOrder } from "../data/types";
+import { SellOrder } from "../data/types";
 import {
   calculateBuyOrderMetrics,
   calculateBuyOrderTotals,
@@ -47,6 +45,7 @@ import {
   formatCurrency,
   formatVolume,
 } from "../utils/orderCalculations";
+import { useOrdersData } from "../hooks/useOrdersData";
 import Loader from "../common/Loader";
 
 type OrderType = "buy" | "sell";
@@ -59,29 +58,12 @@ export default function Orders() {
   const [showOnlyContaminated, setShowOnlyContaminated] = useState(false);
   const [showOnlyClean, setShowOnlyClean] = useState(false);
 
-  // Fetch buy orders
+  // Fetch orders data
   const {
-    data: buyOrdersData = [],
-    isPending: isBuyOrdersPending,
-  } = useQuery<BuyOrder[]>({
-    queryKey: ["buyOrders"],
-    queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return buyOrders;
-    },
-  });
-
-  // Fetch sell orders
-  const {
-    data: sellOrdersData = [],
-    isPending: isSellOrdersPending,
-  } = useQuery<SellOrder[]>({
-    queryKey: ["sellOrders"],
-    queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return sellOrders;
-    },
-  });
+    buyOrders: buyOrdersData,
+    sellOrders: sellOrdersData,
+    isPending,
+  } = useOrdersData();
 
   // Filter orders by date range and contamination status
   const filteredBuyOrders = useMemo(() => {
@@ -176,8 +158,6 @@ export default function Orders() {
     setShowOnlyContaminated(false);
     setShowOnlyClean(false);
   };
-
-  const isPending = isBuyOrdersPending || isSellOrdersPending;
 
   if (isPending) {
     return <Loader />;

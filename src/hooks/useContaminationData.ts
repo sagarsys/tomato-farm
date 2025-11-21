@@ -1,33 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { sellOrders } from "../data/mockData";
-import { SellOrder } from "../data/types";
 import { calculateContaminationImpact } from "../utils/orderCalculations";
+import { useOrdersData } from "./useOrdersData";
 
 /**
  * Custom hook to fetch and calculate contamination impact metrics
  * Reusable across Dashboard and other pages
+ * Leverages useOrdersData to share the same query cache
  */
 export const useContaminationData = () => {
-  const {
-    data: sellOrdersData = [],
-    isPending,
-    isError,
-    error,
-  } = useQuery<SellOrder[]>({
-    queryKey: ["sellOrders"],
-    queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return sellOrders;
-    },
-  });
+  const { sellOrders, isPending, isError } = useOrdersData();
 
-  const contaminationMetrics = calculateContaminationImpact(sellOrdersData);
+  const contaminationMetrics = calculateContaminationImpact(sellOrders);
 
   return {
     contaminationMetrics,
     isPending,
     isError,
-    error,
   };
 };
 
