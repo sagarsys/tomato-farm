@@ -1,4 +1,8 @@
 import { FaPlus } from "react-icons/fa";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { format, isWithinInterval } from "date-fns";
+import { Calendar as CalendarIcon, AlertTriangle } from "lucide-react";
 
 import {
   Card,
@@ -30,21 +34,125 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+
+import { buyOrders, sellOrders } from "../data/mockData";
+import { BuyOrder, SellOrder } from "../data/types";
+import {
+  calculateBuyOrderMetrics,
+  calculateBuyOrderTotals,
+  calculateSellOrderMetrics,
+  calculateSellOrderTotals,
+  formatCurrency,
+  formatVolume,
+} from "../utils/orderCalculations";
+import Loader from "../common/Loader";
+
+type OrderType = "buy" | "sell";
 
 export default function Orders() {
+  const [orderType, setOrderType] = useState<OrderType>("sell");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [isFiltering, setIsFiltering] = useState(false);
+
+  // Fetch buy orders
+  const {
+    data: buyOrdersData = [],
+    isPending: isBuyOrdersPending,
+  } = useQuery<BuyOrder[]>({
+    queryKey: ["buyOrders"],
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return buyOrders;
+    },
+  });
+
+  // Fetch sell orders
+  const {
+    data: sellOrdersData = [],
+    isPending: isSellOrdersPending,
+  } = useQuery<SellOrder[]>({
+    queryKey: ["sellOrders"],
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return sellOrders;
+    },
+  });
+
+  // Filter orders by date range
+  const filteredBuyOrders = useMemo(() => {
+    if (!isFiltering || (!startDate && !endDate)) return buyOrdersData;
+
+    return buyOrdersData.filter((order) => {
+      if (startDate && endDate) {
+        return isWithinInterval(order.date, { start: startDate, end: endDate });
+      }
+      if (startDate) {
+        return order.date >= startDate;
+      }
+      if (endDate) {
+        return order.date <= endDate;
+      }
+      return true;
+    });
+  }, [buyOrdersData, startDate, endDate, isFiltering]);
+
+  const filteredSellOrders = useMemo(() => {
+    if (!isFiltering || (!startDate && !endDate)) return sellOrdersData;
+
+    return sellOrdersData.filter((order) => {
+      if (startDate && endDate) {
+        return isWithinInterval(order.date, { start: startDate, end: endDate });
+      }
+      if (startDate) {
+        return order.date >= startDate;
+      }
+      if (endDate) {
+        return order.date <= endDate;
+      }
+      return true;
+    });
+  }, [sellOrdersData, startDate, endDate, isFiltering]);
+
+  // Calculate totals
+  const buyOrderTotals = useMemo(
+    () => calculateBuyOrderTotals(filteredBuyOrders),
+    [filteredBuyOrders]
+  );
+
+  const sellOrderTotals = useMemo(
+    () => calculateSellOrderTotals(filteredSellOrders),
+    [filteredSellOrders]
+  );
+
+  // Display first 50 orders for performance
+  const displayedBuyOrders = filteredBuyOrders.slice(0, 50);
+  const displayedSellOrders = filteredSellOrders.slice(0, 50);
+
+  const handleFilter = () => {
+    setIsFiltering(true);
+  };
+
+  const handleClearFilter = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setIsFiltering(false);
+  };
+
+  const isPending = isBuyOrdersPending || isSellOrdersPending;
+
+  if (isPending) {
+    return <Loader />;
+  }
 
   return (
     <>
-      <div className="flex gap-4 justify-between">
-        <div className="flex gap-4">
-          <Select>
+      <div className="flex gap-4 justify-between flex-wrap">
+        <div className="flex gap-4 flex-wrap">
+          <Select value={orderType} onValueChange={(value) => setOrderType(value as OrderType)}>
             <SelectTrigger className="w-36">
-              <SelectValue placeholder="Buy Orders" />
+              <SelectValue placeholder="Order Type" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="buy">Buy Orders</SelectItem>
@@ -95,7 +203,14 @@ export default function Orders() {
               />
             </PopoverContent>
           </Popover>
-          <Button variant="outline">Filter</Button>
+          <Button variant="outline" onClick={handleFilter}>
+            Filter
+          </Button>
+          {isFiltering && (
+            <Button variant="ghost" onClick={handleClearFilter}>
+              Clear Filter
+            </Button>
+          )}
         </div>
         <Button variant="default" className="gap-2">
           <FaPlus />
@@ -103,35 +218,190 @@ export default function Orders() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader className="px-7">
-          <CardTitle>Orders</CardTitle>
-          <CardDescription>Total Revenue: $1000</CardDescription>
-          <CardDescription>Total Profit: $1000</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="hidden md:table-cell">Farm</TableHead>
-                <TableHead className="hidden md:table-cell">Date</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow className="bg-accent">
-                <TableCell>
-                  <div className="font-medium">Farm name</div>
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  2023-06-23
-                </TableCell>
-                <TableCell className="text-right">250 kg</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {orderType === "sell" ? (
+        <Card>
+          <CardHeader className="px-7">
+            <CardTitle>Sell Orders</CardTitle>
+            <div className="flex gap-4 flex-wrap">
+              <CardDescription className="text-lg font-semibold text-green-600">
+                Total Revenue: {formatCurrency(sellOrderTotals.totalRevenue)}
+              </CardDescription>
+              <CardDescription className="text-lg font-semibold text-blue-600">
+                Total Profit: {formatCurrency(sellOrderTotals.totalProfit)}
+              </CardDescription>
+              <CardDescription className="text-lg font-semibold">
+                Total Cost: {formatCurrency(sellOrderTotals.totalCost)}
+              </CardDescription>
+            </div>
+            <div className="flex gap-4 flex-wrap text-sm">
+              <CardDescription>
+                Orders: {sellOrderTotals.orderCount.toLocaleString()}
+              </CardDescription>
+              <CardDescription>
+                Volume: {formatVolume(sellOrderTotals.totalVolume)} kg
+              </CardDescription>
+              {sellOrderTotals.contaminatedCount > 0 && (
+                <CardDescription className="text-red-600 flex items-center gap-1">
+                  <AlertTriangle className="h-4 w-4" />
+                  Contaminated: {sellOrderTotals.contaminatedCount}
+                </CardDescription>
+              )}
+            </div>
+            {displayedSellOrders.length < filteredSellOrders.length && (
+              <CardDescription className="text-sm italic">
+                Showing first 50 of {filteredSellOrders.length.toLocaleString()} orders
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Order ID</TableHead>
+                  <TableHead>Store</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="text-right">Volume (kg)</TableHead>
+                  <TableHead className="text-right">Cost</TableHead>
+                  <TableHead className="text-right">Revenue</TableHead>
+                  <TableHead className="text-right">Profit</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {displayedSellOrders.map((order) => {
+                  const metrics = calculateSellOrderMetrics(order);
+                  return (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-mono text-xs">
+                        {order.id.slice(0, 8)}...
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{order.destination.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {order.destination.city}
+                        </div>
+                      </TableCell>
+                      <TableCell>{format(order.date, "MMM dd, yyyy")}</TableCell>
+                      <TableCell className="text-right">
+                        {formatVolume(metrics.totalVolume)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(metrics.totalCost)}
+                      </TableCell>
+                      <TableCell className="text-right text-green-600 font-semibold">
+                        {formatCurrency(metrics.revenue)}
+                      </TableCell>
+                      <TableCell className="text-right text-blue-600 font-semibold">
+                        {formatCurrency(metrics.profit)}
+                      </TableCell>
+                      <TableCell>
+                        {metrics.isContaminated ? (
+                          <Badge variant="destructive" className="gap-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            Contaminated
+                          </Badge>
+                        ) : (
+                          <Badge variant="default">Clean</Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader className="px-7">
+            <CardTitle>Buy Orders</CardTitle>
+            <div className="flex gap-4 flex-wrap">
+              <CardDescription className="text-lg font-semibold">
+                Total Cost: {formatCurrency(buyOrderTotals.totalCost)}
+              </CardDescription>
+              <CardDescription className="text-lg font-semibold">
+                Total Volume: {formatVolume(buyOrderTotals.totalVolume)} kg
+              </CardDescription>
+            </div>
+            <div className="flex gap-4 flex-wrap text-sm">
+              <CardDescription>
+                Orders: {buyOrderTotals.orderCount.toLocaleString()}
+              </CardDescription>
+              {buyOrderTotals.contaminatedCount > 0 && (
+                <CardDescription className="text-red-600 flex items-center gap-1">
+                  <AlertTriangle className="h-4 w-4" />
+                  Contaminated: {buyOrderTotals.contaminatedCount}
+                </CardDescription>
+              )}
+            </div>
+            {displayedBuyOrders.length < filteredBuyOrders.length && (
+              <CardDescription className="text-sm italic">
+                Showing first 50 of {filteredBuyOrders.length.toLocaleString()} orders
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Order ID</TableHead>
+                  <TableHead>Farm</TableHead>
+                  <TableHead>Warehouse</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="text-right">Volume (kg)</TableHead>
+                  <TableHead className="text-right">Price/Unit</TableHead>
+                  <TableHead className="text-right">Total Cost</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {displayedBuyOrders.map((order) => {
+                  const metrics = calculateBuyOrderMetrics(order);
+                  return (
+                    <TableRow key={order.id}>
+                      <TableCell className="font-mono text-xs">
+                        {order.id.slice(0, 8)}...
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{order.supplier.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {order.supplier.city}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{order.destination.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {order.destination.city}
+                        </div>
+                      </TableCell>
+                      <TableCell>{format(order.date, "MMM dd, yyyy")}</TableCell>
+                      <TableCell className="text-right">
+                        {formatVolume(metrics.volume)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        ${order.pricePerUnit}
+                      </TableCell>
+                      <TableCell className="text-right font-semibold">
+                        {formatCurrency(metrics.totalCost)}
+                      </TableCell>
+                      <TableCell>
+                        {metrics.isContaminated ? (
+                          <Badge variant="destructive" className="gap-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            Contaminated
+                          </Badge>
+                        ) : (
+                          <Badge variant="default">Clean</Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
     </>
   );
 }
