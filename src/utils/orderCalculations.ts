@@ -127,3 +127,45 @@ export const formatVolume = (value: number): string => {
   }).format(value);
 };
 
+/**
+ * Calculate contamination impact across all sell orders
+ */
+export const calculateContaminationImpact = (sellOrders: SellOrder[]) => {
+  const contaminatedOrders = sellOrders.filter((order) => {
+    const metrics = calculateSellOrderMetrics(order);
+    return metrics.isContaminated;
+  });
+
+  // Calculate lost revenue from contaminated orders
+  let lostRevenue = 0;
+  const affectedStoresSet = new Set<string>();
+  const contaminatedFarmsSet = new Set<string>();
+
+  contaminatedOrders.forEach((order) => {
+    const metrics = calculateSellOrderMetrics(order);
+    lostRevenue += metrics.revenue;
+    affectedStoresSet.add(order.destination.id);
+
+    // Collect all contaminated farms from buy orders
+    order.costs.forEach((buyOrder) => {
+      if (buyOrder.isContaminated) {
+        contaminatedFarmsSet.add(buyOrder.supplier.id);
+      }
+    });
+  });
+
+  const contaminationPercentage =
+    sellOrders.length > 0
+      ? (contaminatedOrders.length / sellOrders.length) * 100
+      : 0;
+
+  return {
+    contaminatedOrderCount: contaminatedOrders.length,
+    totalOrderCount: sellOrders.length,
+    lostRevenue,
+    affectedStoresCount: affectedStoresSet.size,
+    contaminatedFarmsCount: contaminatedFarmsSet.size,
+    contaminationPercentage,
+  };
+};
+

@@ -35,6 +35,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { buyOrders, sellOrders } from "../data/mockData";
 import { BuyOrder, SellOrder } from "../data/types";
@@ -55,6 +56,8 @@ export default function Orders() {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [isFiltering, setIsFiltering] = useState(false);
+  const [showOnlyContaminated, setShowOnlyContaminated] = useState(false);
+  const [showOnlyClean, setShowOnlyClean] = useState(false);
 
   // Fetch buy orders
   const {
@@ -80,40 +83,72 @@ export default function Orders() {
     },
   });
 
-  // Filter orders by date range
+  // Filter orders by date range and contamination status
   const filteredBuyOrders = useMemo(() => {
-    if (!isFiltering || (!startDate && !endDate)) return buyOrdersData;
+    let filtered = buyOrdersData;
 
-    return buyOrdersData.filter((order) => {
-      if (startDate && endDate) {
-        return isWithinInterval(order.date, { start: startDate, end: endDate });
-      }
-      if (startDate) {
-        return order.date >= startDate;
-      }
-      if (endDate) {
-        return order.date <= endDate;
-      }
-      return true;
-    });
-  }, [buyOrdersData, startDate, endDate, isFiltering]);
+    // Apply date filtering
+    if (isFiltering && (startDate || endDate)) {
+      filtered = filtered.filter((order) => {
+        if (startDate && endDate) {
+          return isWithinInterval(order.date, { start: startDate, end: endDate });
+        }
+        if (startDate) {
+          return order.date >= startDate;
+        }
+        if (endDate) {
+          return order.date <= endDate;
+        }
+        return true;
+      });
+    }
+
+    // Apply contamination filtering
+    if (showOnlyContaminated) {
+      filtered = filtered.filter((order) => order.isContaminated);
+    }
+    if (showOnlyClean) {
+      filtered = filtered.filter((order) => !order.isContaminated);
+    }
+
+    return filtered;
+  }, [buyOrdersData, startDate, endDate, isFiltering, showOnlyContaminated, showOnlyClean]);
 
   const filteredSellOrders = useMemo(() => {
-    if (!isFiltering || (!startDate && !endDate)) return sellOrdersData;
+    let filtered = sellOrdersData;
 
-    return sellOrdersData.filter((order) => {
-      if (startDate && endDate) {
-        return isWithinInterval(order.date, { start: startDate, end: endDate });
-      }
-      if (startDate) {
-        return order.date >= startDate;
-      }
-      if (endDate) {
-        return order.date <= endDate;
-      }
-      return true;
-    });
-  }, [sellOrdersData, startDate, endDate, isFiltering]);
+    // Apply date filtering
+    if (isFiltering && (startDate || endDate)) {
+      filtered = filtered.filter((order) => {
+        if (startDate && endDate) {
+          return isWithinInterval(order.date, { start: startDate, end: endDate });
+        }
+        if (startDate) {
+          return order.date >= startDate;
+        }
+        if (endDate) {
+          return order.date <= endDate;
+        }
+        return true;
+      });
+    }
+
+    // Apply contamination filtering
+    if (showOnlyContaminated) {
+      filtered = filtered.filter((order) => {
+        const metrics = calculateSellOrderMetrics(order);
+        return metrics.isContaminated;
+      });
+    }
+    if (showOnlyClean) {
+      filtered = filtered.filter((order) => {
+        const metrics = calculateSellOrderMetrics(order);
+        return !metrics.isContaminated;
+      });
+    }
+
+    return filtered;
+  }, [sellOrdersData, startDate, endDate, isFiltering, showOnlyContaminated, showOnlyClean]);
 
   // Calculate totals
   const buyOrderTotals = useMemo(
@@ -138,6 +173,8 @@ export default function Orders() {
     setStartDate(undefined);
     setEndDate(undefined);
     setIsFiltering(false);
+    setShowOnlyContaminated(false);
+    setShowOnlyClean(false);
   };
 
   const isPending = isBuyOrdersPending || isSellOrdersPending;
@@ -203,6 +240,39 @@ export default function Orders() {
               />
             </PopoverContent>
           </Popover>
+          <div className="flex items-center gap-2 border rounded-md px-3 py-2">
+            <Checkbox
+              id="contaminated"
+              checked={showOnlyContaminated}
+              onCheckedChange={(checked) => {
+                setShowOnlyContaminated(!!checked);
+                if (checked) setShowOnlyClean(false);
+              }}
+            />
+            <label
+              htmlFor="contaminated"
+              className="text-sm font-medium leading-none cursor-pointer flex items-center gap-1"
+            >
+              <AlertTriangle className="h-3 w-3 text-red-600" />
+              Contaminated only
+            </label>
+          </div>
+          <div className="flex items-center gap-2 border rounded-md px-3 py-2">
+            <Checkbox
+              id="clean"
+              checked={showOnlyClean}
+              onCheckedChange={(checked) => {
+                setShowOnlyClean(!!checked);
+                if (checked) setShowOnlyContaminated(false);
+              }}
+            />
+            <label
+              htmlFor="clean"
+              className="text-sm font-medium leading-none cursor-pointer"
+            >
+              Clean only
+            </label>
+          </div>
           <Button variant="outline" onClick={handleFilter}>
             Filter
           </Button>
