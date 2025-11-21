@@ -32,15 +32,33 @@ export const useSupplyChainMetrics = () => {
     return buyOrders.reduce((sum, order) => sum + order.volume, 0);
   }, [buyOrders]);
 
+  // Volume sold = only from clean (non-contaminated) sell orders
   const volumeSold = useMemo(() => {
     return sellOrders.reduce((sum, order) => {
-      return (
-        sum + order.costs.reduce((costSum, cost) => costSum + cost.volume, 0)
-      );
+      const metrics = calculateSellOrderMetrics(order);
+      // Only count volume from clean orders (can actually be sold)
+      if (!metrics.isContaminated) {
+        return (
+          sum + order.costs.reduce((costSum, cost) => costSum + cost.volume, 0)
+        );
+      }
+      return sum;
     }, 0);
   }, [sellOrders]);
 
-  const volumeLoss = volumePurchased - volumeSold;
+  // Volume loss = contaminated volume that was purchased but cannot be sold
+  const volumeLoss = useMemo(() => {
+    return sellOrders.reduce((sum, order) => {
+      const metrics = calculateSellOrderMetrics(order);
+      // Count volume from contaminated orders as loss
+      if (metrics.isContaminated) {
+        return (
+          sum + order.costs.reduce((costSum, cost) => costSum + cost.volume, 0)
+        );
+      }
+      return sum;
+    }, 0);
+  }, [sellOrders]);
 
   // Track contamination through supply chain
   const contaminationMetrics = useMemo(() => {
