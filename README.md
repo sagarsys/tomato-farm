@@ -68,6 +68,7 @@ This app helps Georgie:
 - **Active Navigation**: Highlighted navigation links showing current page
 - **Toast Notifications**: User feedback for actions (copy, export, filter)
 - **Empty States**: Context-aware messages with clear actions
+- **Global Search**: Cmd/Ctrl+K to search across all entities (farms, warehouses, stores, orders)
 - **Responsive Design**: Optimized for desktop, tablet, and mobile
 
 ## 🛠️ Tech Stack
@@ -255,8 +256,8 @@ lostRevenue = sum(contaminatedOrders.revenue)
 ## 📈 Future Enhancements
 
 - [x] ~~Table virtualization for 10K+ rows~~ ✅ **Implemented**
+- [x] ~~Advanced search across all entities~~ ✅ **Implemented**
 - [ ] Time-series charts for trends over time
-- [ ] Advanced search across all entities
 - [ ] Farm remediation workflow and tracking
 - [ ] Real-time data updates with WebSockets
 - [ ] Batch operations for orders and farms
