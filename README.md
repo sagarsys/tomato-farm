@@ -87,43 +87,80 @@ This app helps Georgie:
 
 ## 📁 Project Structure
 
+### Feature-Based Architecture
+
 ```
 src/
-├── @/components/ui/    # Shadcn UI components
-├── components/         # Custom components
-│   ├── ContaminationImpactCard.tsx
-│   ├── EmptyState.tsx
-│   ├── FlowArrow.tsx
-│   ├── MetricCard.tsx
-│   ├── RecentOrdersWidget.tsx
-│   ├── SupplyChainFlowCard.tsx
-│   ├── SupplyChainRoutesWidget.tsx
-│   ├── TopContaminatedFarmsWidget.tsx
-│   └── TopFarmsWidget.tsx
-├── hooks/              # Custom React hooks
-│   ├── useContaminationData.ts
-│   ├── useDashboardMetrics.ts
-│   ├── useFarmMetrics.ts
-│   ├── useOrdersData.ts
-│   └── useSupplyChainMetrics.ts
-├── pages/              # Page components
-│   ├── Dashboard.tsx
-│   ├── Farms.tsx
-│   ├── Orders.tsx
-│   └── SupplyChain.tsx
-├── context/            # React contexts
-│   └── ThemeContext.tsx
-├── constants/          # App constants
-│   └── toastConfig.ts
-├── data/               # Types and mock data
-│   ├── mockData.ts
-│   └── types.ts
-├── utils/              # Utility functions
-│   ├── csvExport.ts
-│   └── orderCalculations.ts
-└── layout/             # Layout components
-    └── DefaultLayout.tsx
+├── components/              # Common UI components
+│   ├── ui/                  # Shadcn UI primitives
+│   ├── EmptyState.tsx       # Reusable empty state component
+│   └── Loader.tsx           # Loading indicator
+├── features/                # Feature modules (isolated & self-contained)
+│   ├── dashboard/
+│   │   ├── Dashboard.page.tsx              # Main dashboard page
+│   │   ├── components/                      # Dashboard-specific components
+│   │   │   ├── ContaminationImpactCard.tsx
+│   │   │   ├── MetricCard.tsx
+│   │   │   ├── RecentOrdersWidget.tsx
+│   │   │   └── TopFarmsWidget.tsx
+│   │   ├── hooks/                           # Dashboard-specific hooks
+│   │   │   ├── useContaminationData.ts
+│   │   │   └── useDashboardMetrics.ts
+│   │   └── index.ts                         # Public exports
+│   ├── farms/
+│   │   ├── Farms.page.tsx                   # Farms management page
+│   │   ├── components/
+│   │   │   └── TopContaminatedFarmsWidget.tsx
+│   │   ├── hooks/
+│   │   │   └── useFarmMetrics.ts
+│   │   └── index.ts
+│   ├── orders/
+│   │   ├── Orders.page.tsx                  # Orders management page
+│   │   ├── components/
+│   │   │   └── CreateOrderModal.tsx
+│   │   ├── hooks/
+│   │   │   └── useOrdersData.ts
+│   │   ├── utils/
+│   │   │   ├── orderCalculations.ts         # Business logic
+│   │   │   └── orderColumns.tsx             # Table column definitions
+│   │   └── index.ts
+│   └── supply-chain/
+│       ├── SupplyChain.page.tsx             # Supply chain visualization
+│       ├── components/
+│       │   ├── FlowArrow.tsx
+│       │   ├── SupplyChainFlowCard.tsx
+│       │   └── SupplyChainRoutesWidget.tsx
+│       ├── hooks/
+│       │   └── useSupplyChainMetrics.ts
+│       └── index.ts
+├── lib/                    # Shared utilities
+│   ├── utils.ts            # General utilities (cn)
+│   ├── csvExport.ts        # CSV export helper
+│   └── format.ts           # Number/currency formatting
+├── config/                 # App configuration
+│   └── toast.config.ts     # Toast notification settings
+├── types/                  # Global TypeScript types
+│   └── index.ts            # Farm, Warehouse, Store, Orders
+├── services/               # Data services
+│   └── mockData.ts         # Faker.js mock data generator
+├── context/                # React contexts
+│   └── ThemeContext.tsx    # Dark mode theme provider
+├── layout/                 # Layout components
+│   └── DefaultLayout.tsx   # Main app layout with navigation
+├── images/                 # Static assets
+└── App.tsx                 # Root application component
 ```
+
+### Path Alias Configuration
+
+The project uses `@/` as an alias for `src/`:
+- `@/components/ui/button` → `src/components/ui/button`
+- `@/lib/utils` → `src/lib/utils`
+- `@/features/orders/hooks/useOrdersData` → `src/features/orders/hooks/useOrdersData`
+
+Configured in:
+- `tsconfig.json`: TypeScript path mapping
+- `rsbuild.config.ts`: Build-time module resolution
 
 ## 🚀 Getting Started
 
