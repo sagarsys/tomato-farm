@@ -47,6 +47,8 @@ This app helps Georgie:
 - **Sortable columns**: Name, Orders, Volume, Contamination Rate
 - **Filter by status**: Contaminated only, Clean only
 - **Top Contaminated Farms Widget**: Identify high-risk suppliers
+- **CSV Export**: Export filtered farms with all metrics
+- **Empty states**: Context-aware messages when no data matches filters
 
 ### 📝 Orders Page
 
@@ -56,6 +58,16 @@ This app helps Georgie:
 - **Contamination filters**: Show only contaminated or clean orders
 - **Sortable columns**: Date, Volume, Cost, Revenue, Profit
 - **Pagination**: Navigate through large datasets
+- **CSV Export**: Export filtered orders with all details
+- **Empty states**: Helpful messages and clear filter actions
+
+### 🎨 UI/UX Enhancements
+
+- **Dark Mode**: Full dark mode support with toggle button, persisted to localStorage
+- **Active Navigation**: Highlighted navigation links showing current page
+- **Toast Notifications**: User feedback for actions (copy, export, filter)
+- **Empty States**: Context-aware messages with clear actions
+- **Responsive Design**: Optimized for desktop, tablet, and mobile
 
 ## 🛠️ Tech Stack
 
@@ -68,6 +80,7 @@ This app helps Georgie:
 - **Tables**: TanStack Table
 - **Charts**: Recharts (available)
 - **Icons**: Lucide React
+- **Notifications**: React Hot Toast
 - **Mock Data**: Faker.js
 
 ## 📁 Project Structure
@@ -77,6 +90,7 @@ src/
 ├── @/components/ui/    # Shadcn UI components
 ├── components/         # Custom components
 │   ├── ContaminationImpactCard.tsx
+│   ├── EmptyState.tsx
 │   ├── FlowArrow.tsx
 │   ├── MetricCard.tsx
 │   ├── RecentOrdersWidget.tsx
@@ -95,10 +109,15 @@ src/
 │   ├── Farms.tsx
 │   ├── Orders.tsx
 │   └── SupplyChain.tsx
+├── context/            # React contexts
+│   └── ThemeContext.tsx
+├── constants/          # App constants
+│   └── toastConfig.ts
 ├── data/               # Types and mock data
 │   ├── mockData.ts
 │   └── types.ts
 ├── utils/              # Utility functions
+│   ├── csvExport.ts
 │   └── orderCalculations.ts
 └── layout/             # Layout components
     └── DefaultLayout.tsx
@@ -195,12 +214,14 @@ lostRevenue = sum(contaminatedOrders.revenue)
 
 ## 📈 Future Enhancements
 
-- [ ] Table virtualization for 10K+ rows
-- [ ] Time-series charts for trends
-- [ ] Export to CSV functionality
-- [ ] Farm remediation workflow
-- [ ] Advanced search across entities
-- [ ] Real-time data updates
+- [ ] Table virtualization for 10K+ rows (smooth scrolling)
+- [ ] Time-series charts for trends over time
+- [ ] Advanced search across all entities
+- [ ] Farm remediation workflow and tracking
+- [ ] Real-time data updates with WebSockets
+- [ ] Batch operations for orders and farms
+- [ ] Email notifications for contamination alerts
+- [ ] Historical data comparison and analytics
 
 ## 📄 License
 
