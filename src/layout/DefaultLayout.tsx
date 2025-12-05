@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import Logo from "../images/logo.svg?react";
+import Logo from "../images/logo-1.svg?react";
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
             <Logo className="w-32" />
-            <span className="sr-only">Tract B.V</span>
+            <span className="sr-only">Fresh Tomato Farm</span>
           </Link>
           <Link
             to="/"

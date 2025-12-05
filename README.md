@@ -5,9 +5,11 @@ A comprehensive supply chain management application for tomato distribution. Bui
 ## 📸 Screenshots
 
 ### Dashboard
+
 ![Dashboard](public/screenshots/dashboard.png)
 
 ### Supply Chain Visualization
+
 ![Supply Chain](public/screenshots/supply-chain.png)
 
 ## 🎯 Project Overview
@@ -15,6 +17,7 @@ A comprehensive supply chain management application for tomato distribution. Bui
 Georgie is a manager of a tomato distributor. Her company buys tomatoes from **farms** and sells them to **stores**. However, sometimes farms become **contaminated**, and tomatoes from those farms can no longer be sold.
 
 This app helps Georgie:
+
 - **Track revenue and profits** from all transactions
 - **Monitor contamination** across the supply chain
 - **Visualize the supply chain flow** from farms through warehouses to stores
@@ -24,18 +27,21 @@ This app helps Georgie:
 ## ✨ Features Implemented
 
 ### 📊 Dashboard
+
 - **Key Metrics Cards**: Total Revenue, Profit, Profit Margin, Volume Sold
 - **Contamination Impact Widget**: Shows lost revenue, affected orders, and contamination rate
 - **Top Performing Farms**: Ranked list of farms by volume
 - **Recent Orders**: Latest transactions with revenue and status
 
 ### 🔗 Supply Chain Visualization
+
 - **Visual Flow Diagram**: Farms → Warehouses → Stores with order counts
 - **Volume Metrics**: Track volume at each stage (purchased, stored, sold, lost)
 - **Contamination Impact**: Impact breakdown at each supply chain level
 - **Top Supply Routes**: Best-performing Farm → Warehouse → Store paths
 
 ### 🚜 Farms Page
+
 - **10,000 farms** with full data table (TanStack Table)
 - **Contamination tracking** per farm (status, rate, order count)
 - **Sortable columns**: Name, Orders, Volume, Contamination Rate
@@ -43,6 +49,7 @@ This app helps Georgie:
 - **Top Contaminated Farms Widget**: Identify high-risk suppliers
 
 ### 📝 Orders Page
+
 - **16,000 Buy Orders** and **4,000 Sell Orders**
 - **Toggle between Buy/Sell** orders
 - **Date range filtering** with calendar pickers
@@ -100,6 +107,7 @@ src/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js (v18+)
 - npm or yarn
 
@@ -141,6 +149,7 @@ SellOrder: {
 ## 🧮 Key Calculations
 
 ### Revenue & Profit
+
 ```javascript
 Revenue = totalVolume × sellPricePerUnit
 Cost = sum(buyOrder.volume × buyOrder.pricePerUnit)
@@ -149,6 +158,7 @@ ProfitMargin = (Profit / Revenue) × 100
 ```
 
 ### Contamination Impact
+
 ```javascript
 // If ANY buy order in a sell order is contaminated, the entire order is lost
 isContaminated = sellOrder.costs.some(buyOrder => buyOrder.isContaminated)
@@ -158,17 +168,20 @@ lostRevenue = sum(contaminatedOrders.revenue)
 ## 📝 Key Features in Detail
 
 ### Modular Architecture
+
 - **Hooks**: Data fetching and calculations separated into reusable hooks
 - **Components**: Modular, reusable UI components
 - **Utils**: Shared calculation functions
 
 ### Performance Optimizations
+
 - **TanStack Query**: Shared caching across components
 - **useMemo**: Expensive calculations memoized
 - **TanStack Table**: Efficient rendering for large datasets
 - **Pagination**: 50 rows per page for optimal performance
 
 ### Type Safety
+
 - Full TypeScript throughout
 - Strongly typed props and return values
 - Type-safe data structures

@@ -2,6 +2,7 @@ import { FaPlus } from "react-icons/fa";
 import { useMemo, useState } from "react";
 import { format, isWithinInterval } from "date-fns";
 import { Calendar as CalendarIcon, AlertTriangle, ArrowUpDown } from "lucide-react";
+import toast from "react-hot-toast";
 import {
   ColumnDef,
   SortingState,
@@ -507,6 +508,7 @@ export default function Orders() {
 
   const handleFilter = () => {
     setIsFiltering(true);
+    toast.success("Filters applied");
   };
 
   const handleClearFilter = () => {
@@ -515,6 +517,7 @@ export default function Orders() {
     setIsFiltering(false);
     setShowOnlyContaminated(false);
     setShowOnlyClean(false);
+    toast.success("Filters cleared");
   };
 
   if (isPending) {
@@ -620,7 +623,11 @@ export default function Orders() {
             </Button>
           )}
         </div>
-        <Button variant="default" className="gap-2">
+        <Button
+          variant="default"
+          className="gap-2"
+          onClick={() => toast("Create order feature coming soon!", { icon: "🚧" })}
+        >
           <FaPlus />
           Create Order
         </Button>

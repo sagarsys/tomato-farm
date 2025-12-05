@@ -12,6 +12,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal, AlertTriangle } from "lucide-react";
+import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -235,7 +236,10 @@ export const createColumns = (
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(farm.id)}
+              onClick={() => {
+                navigator.clipboard.writeText(farm.id);
+                toast.success("Farm ID copied to clipboard!");
+              }}
             >
               Copy farm ID
             </DropdownMenuItem>
