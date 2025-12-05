@@ -3,8 +3,10 @@ import { ContaminationImpactCard } from "./components/ContaminationImpactCard";
 import { MetricCard } from "./components/MetricCard";
 import { TopFarmsWidget } from "./components/TopFarmsWidget";
 import { RecentOrdersWidget } from "./components/RecentOrdersWidget";
+import { TrendsChart } from "./components/TrendsChart";
+import { ContaminationTrendsChart } from "./components/ContaminationTrendsChart";
 import { useDashboardMetrics } from "./hooks/useDashboardMetrics";
-import {   } from "@/features/orders/utils/orderCalculations";
+import { formatCurrency, formatVolume } from "@/lib/format";
 import Loader from "@/components/Loader";
 
 export function Dashboard() {
@@ -28,7 +30,7 @@ export function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
         <MetricCard
           title="Total Revenue"
-          value={(totalRevenue)}
+          value={formatCurrency(totalRevenue)}
           subtitle="From all sell orders"
           icon={DollarSign}
           iconColor="text-green-600"
@@ -36,7 +38,7 @@ export function Dashboard() {
         />
         <MetricCard
           title="Total Profit"
-          value={(totalProfit)}
+          value={formatCurrency(totalProfit)}
           subtitle="Revenue minus costs"
           icon={TrendingUp}
           iconColor="text-blue-600"
@@ -52,7 +54,7 @@ export function Dashboard() {
         />
         <MetricCard
           title="Total Volume Sold"
-          value={`${(totalVolumeSold)} kg`}
+          value={`${formatVolume(totalVolumeSold)} kg`}
           subtitle="Total tomatoes sold"
           icon={Package}
           iconColor="text-orange-600"
@@ -63,6 +65,12 @@ export function Dashboard() {
       {/* Contamination Alert */}
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
         <ContaminationImpactCard />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8">
+        <TrendsChart />
+        <ContaminationTrendsChart />
       </div>
 
       {/* Widgets Row */}

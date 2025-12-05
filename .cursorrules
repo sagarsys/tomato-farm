@@ -42,6 +42,82 @@ Example Pseudocode Plan and Implementation
 
 When responding to questions, use the Chain of Thought method. Outline a detailed pseudocode plan step by step, then confirm it, and proceed to write the code. Here’s an example:
 
+# Project Architecture
+
+This project follows a **feature-based architecture** for better organization and scalability.
+
+## Directory Structure
+
+```
+src/
+├── features/           # Feature modules (self-contained)
+│   ├── dashboard/
+│   ├── farms/
+│   ├── orders/
+│   └── supply-chain/
+├── components/         # Common reusable components
+│   └── ui/            # Shadcn UI primitives
+├── hooks/             # Global React hooks
+├── lib/               # Shared utilities
+├── config/            # App configuration
+├── types/             # Global TypeScript types
+├── services/          # Data services (API, mock data)
+├── context/           # React contexts
+└── layout/            # Layout components
+```
+
+## Feature Module Structure
+
+Each feature is **self-contained** with:
+- `FeatureName.page.tsx` - Main page component
+- `components/` - Feature-specific components
+- `hooks/` - Feature-specific hooks
+- `utils/` - Feature-specific utilities
+- `index.ts` - Public exports
+
+## Path Alias (@/)
+
+Always use the `@/` alias for imports:
+- ✅ `import { Button } from "@/components/ui/button"`
+- ✅ `import { formatCurrency } from "@/lib/format"`
+- ✅ `import { useOrdersData } from "@/features/orders/hooks/useOrdersData"`
+- ❌ `import { Button } from "../../components/ui/button"`
+
+Within a feature, use relative imports:
+- ✅ `import { OrderModal } from "./components/OrderModal"`
+- ✅ `import { useOrderFilters } from "./hooks/useOrderFilters"`
+
+## Code Organization Rules
+
+**1. Extract Large Components**
+- Page files should be < 300 lines
+- Extract column definitions to `utils/` files
+- Extract complex JSX to separate components
+- Move business logic to hooks or utils
+
+**2. Component Placement**
+- Feature-specific → `features/{name}/components/`
+- Reusable across features → `src/components/`
+- UI primitives → `src/components/ui/`
+
+**3. Hook Placement**
+- Feature-specific → `features/{name}/hooks/`
+- Global/shared → `src/hooks/`
+
+**4. Utility Placement**
+- Feature-specific calculations → `features/{name}/utils/`
+- Shared utilities → `src/lib/`
+
+## Import Order
+
+Organize imports in this order:
+1. React & external libraries
+2. UI components (@/components/ui/*)
+3. Components (@/components/*)
+4. Features (@/features/*)
+5. Hooks, utils, types
+6. Relative imports (./)
+
 # Important: Minimal Code Changes
 
 **Only modify sections of the code related to the task at hand.**
@@ -51,5 +127,5 @@ When responding to questions, use the Chain of Thought method. Outline a detaile
 **Accomplish the goal with the minimum amount of code changes.**
 **Code change = potential for bugs and technical debt.**
 
-Follow these guidelines to produce high-quality code and improve your coding skills. If you have any questions or need clarification, don’t hesitate to ask!
+Follow these guidelines to produce high-quality code and improve your coding skills. If you have any questions or need clarification, don't hesitate to ask!
 
