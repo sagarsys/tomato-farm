@@ -1,6 +1,7 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
 import { pluginSvgr } from "@rsbuild/plugin-svgr";
+import path from "path";
 
 export default defineConfig({
   plugins: [pluginReact(), pluginSvgr()],
@@ -10,6 +11,11 @@ export default defineConfig({
   output: {
     distPath: {
       root: "build",
+    },
+  },
+  source: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });
