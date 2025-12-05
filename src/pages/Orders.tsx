@@ -1,7 +1,7 @@
 import { FaPlus } from "react-icons/fa";
 import { useMemo, useState } from "react";
 import { format, isWithinInterval } from "date-fns";
-import { Calendar as CalendarIcon, AlertTriangle, ArrowUpDown } from "lucide-react";
+import { Calendar as CalendarIcon, AlertTriangle, ArrowUpDown, PackageX } from "lucide-react";
 import toast from "react-hot-toast";
 import {
   ColumnDef,
@@ -58,6 +58,7 @@ import {
 import { useOrdersData } from "../hooks/useOrdersData";
 import Loader from "../common/Loader";
 import { BuyOrder } from "../data/types";
+import { EmptyState } from "../components/EmptyState";
 
 type OrderType = "buy" | "sell";
 
@@ -704,11 +705,18 @@ export default function Orders() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell
-                        colSpan={sellOrderColumns.length}
-                        className="h-24 text-center"
-                      >
-                        No orders found.
+                      <TableCell colSpan={sellOrderColumns.length} className="p-0">
+                        <EmptyState
+                          icon={PackageX}
+                          title="No orders found"
+                          description={
+                            isFiltering || showOnlyContaminated || showOnlyClean
+                              ? "Try adjusting your filters to see more results."
+                              : "There are no sell orders available at the moment."
+                          }
+                          actionLabel={isFiltering ? "Clear filters" : undefined}
+                          onAction={isFiltering ? handleClearFilter : undefined}
+                        />
                       </TableCell>
                     </TableRow>
                   )}
@@ -801,11 +809,18 @@ export default function Orders() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell
-                        colSpan={buyOrderColumns.length}
-                        className="h-24 text-center"
-                      >
-                        No orders found.
+                      <TableCell colSpan={buyOrderColumns.length} className="p-0">
+                        <EmptyState
+                          icon={PackageX}
+                          title="No orders found"
+                          description={
+                            isFiltering || showOnlyContaminated || showOnlyClean
+                              ? "Try adjusting your filters to see more results."
+                              : "There are no buy orders available at the moment."
+                          }
+                          actionLabel={isFiltering ? "Clear filters" : undefined}
+                          onAction={isFiltering ? handleClearFilter : undefined}
+                        />
                       </TableCell>
                     </TableRow>
                   )}

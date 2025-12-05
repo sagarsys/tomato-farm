@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, AlertTriangle } from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal, AlertTriangle, TractorIcon } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,7 @@ import { useQuery } from "@tanstack/react-query";
 import { farms } from "../data/mockData";
 import { useFarmMetrics } from "../hooks/useFarmMetrics";
 import { TopContaminatedFarmsWidget } from "../components/TopContaminatedFarmsWidget";
+import { EmptyState } from "../components/EmptyState";
 
 // Create columns function that receives farmMetricsMap
 export const createColumns = (
@@ -453,11 +454,30 @@ const Farms = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
+                  <TableCell colSpan={columns.length} className="p-0">
+                    <EmptyState
+                      icon={TractorIcon}
+                      title="No farms found"
+                      description={
+                        showOnlyContaminated || showOnlyClean || columnFilters.length > 0
+                          ? "Try adjusting your search or filters to see more results."
+                          : "There are no farms available at the moment."
+                      }
+                      actionLabel={
+                        showOnlyContaminated || showOnlyClean || columnFilters.length > 0
+                          ? "Clear filters"
+                          : undefined
+                      }
+                      onAction={
+                        showOnlyContaminated || showOnlyClean || columnFilters.length > 0
+                          ? () => {
+                              setShowOnlyContaminated(false);
+                              setShowOnlyClean(false);
+                              setColumnFilters([]);
+                            }
+                          : undefined
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               )}
