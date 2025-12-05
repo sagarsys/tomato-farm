@@ -1,8 +1,9 @@
 import React, { ReactNode } from "react";
 import Logo from "../images/logo-1.svg?react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,13 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { CircleUser, Menu, Search } from "lucide-react";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const location = useLocation();
+
+  // Check if current route matches the link path
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 bg-white z-50">
@@ -29,25 +37,45 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
           </Link>
           <Link
             to="/"
-            className="text-foreground transition-colors hover:text-foreground"
+            className={cn(
+              "transition-colors hover:text-foreground",
+              isActive("/")
+                ? "text-foreground font-semibold"
+                : "text-muted-foreground"
+            )}
           >
             Dashboard
           </Link>
           <Link
             to="/supply-chain"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className={cn(
+              "transition-colors hover:text-foreground",
+              isActive("/supply-chain")
+                ? "text-foreground font-semibold"
+                : "text-muted-foreground"
+            )}
           >
             Supply Chain
           </Link>
           <Link
             to="/farms"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className={cn(
+              "transition-colors hover:text-foreground",
+              isActive("/farms")
+                ? "text-foreground font-semibold"
+                : "text-muted-foreground"
+            )}
           >
             Farms
           </Link>
           <Link
             to="/orders"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className={cn(
+              "transition-colors hover:text-foreground",
+              isActive("/orders")
+                ? "text-foreground font-semibold"
+                : "text-muted-foreground"
+            )}
           >
             Orders
           </Link>
@@ -71,24 +99,47 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
               >
                 <Logo className="w-32" />
               </Link>
-              <Link to="/" className="hover:text-foreground">
+              <Link
+                to="/"
+                className={cn(
+                  "hover:text-foreground",
+                  isActive("/")
+                    ? "text-foreground font-semibold"
+                    : "text-muted-foreground"
+                )}
+              >
                 Dashboard
               </Link>
               <Link
                 to="/supply-chain"
-                className="text-muted-foreground hover:text-foreground"
+                className={cn(
+                  "hover:text-foreground",
+                  isActive("/supply-chain")
+                    ? "text-foreground font-semibold"
+                    : "text-muted-foreground"
+                )}
               >
                 Supply Chain
               </Link>
               <Link
                 to="/farms"
-                className="text-muted-foreground hover:text-foreground"
+                className={cn(
+                  "hover:text-foreground",
+                  isActive("/farms")
+                    ? "text-foreground font-semibold"
+                    : "text-muted-foreground"
+                )}
               >
                 Farms
               </Link>
               <Link
                 to="/orders"
-                className="text-muted-foreground hover:text-foreground"
+                className={cn(
+                  "hover:text-foreground",
+                  isActive("/orders")
+                    ? "text-foreground font-semibold"
+                    : "text-muted-foreground"
+                )}
               >
                 Orders
               </Link>
