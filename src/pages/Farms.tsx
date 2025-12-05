@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, AlertTriangle, TractorIcon } from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal, AlertTriangle, TractorIcon, Download } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,7 @@ import { farms } from "../data/mockData";
 import { useFarmMetrics } from "../hooks/useFarmMetrics";
 import { TopContaminatedFarmsWidget } from "../components/TopContaminatedFarmsWidget";
 import { EmptyState } from "../components/EmptyState";
+import { exportToCSV } from "../utils/csvExport";
 
 // Create columns function that receives farmMetricsMap
 export const createColumns = (
@@ -322,6 +323,29 @@ const Farms = () => {
     },
   });
 
+  const handleExportFarms = () => {
+    const exportData = table.getFilteredRowModel().rows.map((row) => {
+      const farm = row.original;
+      const metrics = getFarmMetrics(farm.id);
+      return {
+        "Farm ID": farm.id,
+        Name: farm.name,
+        City: farm.city,
+        "Total Orders": metrics?.orderCount || 0,
+        "Total Volume (kg)": metrics?.totalVolume.toFixed(2) || "0",
+        Status: metrics?.isContaminated ? "Contaminated" : "Clean",
+        "Contamination Rate (%)": metrics?.contaminationRate.toFixed(1) || "0",
+        "Contaminated Orders": metrics?.contaminatedOrderCount || 0,
+      };
+    });
+
+    exportToCSV(
+      exportData,
+      `farms-${new Date().toISOString().split("T")[0]}.csv`
+    );
+    toast.success(`Exported ${exportData.length} farms`);
+  };
+
   if (isPending || isMetricsPending) {
     return <Loader />;
   }
@@ -388,9 +412,19 @@ const Farms = () => {
               Clear Filters
             </Button>
           )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportFarms}
+            className="gap-2 ml-auto"
+            disabled={table.getFilteredRowModel().rows.length === 0}
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button variant="outline">
                 Columns <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

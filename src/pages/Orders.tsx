@@ -1,7 +1,7 @@
 import { FaPlus } from "react-icons/fa";
 import { useMemo, useState } from "react";
 import { format, isWithinInterval } from "date-fns";
-import { Calendar as CalendarIcon, AlertTriangle, ArrowUpDown, PackageX } from "lucide-react";
+import { Calendar as CalendarIcon, AlertTriangle, ArrowUpDown, PackageX, Download } from "lucide-react";
 import toast from "react-hot-toast";
 import {
   ColumnDef,
@@ -59,6 +59,7 @@ import { useOrdersData } from "../hooks/useOrdersData";
 import Loader from "../common/Loader";
 import { BuyOrder } from "../data/types";
 import { EmptyState } from "../components/EmptyState";
+import { exportToCSV } from "../utils/csvExport";
 
 type OrderType = "buy" | "sell";
 
@@ -521,6 +522,53 @@ export default function Orders() {
     toast.success("Filters cleared");
   };
 
+  const handleExportSellOrders = () => {
+    const exportData = filteredSellOrders.map((order) => {
+      const metrics = calculateSellOrderMetrics(order);
+      return {
+        "Order ID": order.id,
+        Store: order.destination.name,
+        City: order.destination.city,
+        Date: format(order.date, "yyyy-MM-dd"),
+        "Volume (kg)": metrics.totalVolume.toFixed(2),
+        Cost: metrics.totalCost.toFixed(2),
+        Revenue: metrics.revenue.toFixed(2),
+        Profit: metrics.profit.toFixed(2),
+        Status: metrics.isContaminated ? "Contaminated" : "Clean",
+      };
+    });
+    
+    exportToCSV(
+      exportData,
+      `sell-orders-${format(new Date(), "yyyy-MM-dd")}.csv`
+    );
+    toast.success(`Exported ${exportData.length} sell orders`);
+  };
+
+  const handleExportBuyOrders = () => {
+    const exportData = filteredBuyOrders.map((order) => {
+      const metrics = calculateBuyOrderMetrics(order);
+      return {
+        "Order ID": order.id,
+        Farm: order.supplier.name,
+        "Farm City": order.supplier.city,
+        Warehouse: order.destination.name,
+        "Warehouse City": order.destination.city,
+        Date: format(order.date, "yyyy-MM-dd"),
+        "Volume (kg)": metrics.volume.toFixed(2),
+        "Price per Unit": order.pricePerUnit.toFixed(2),
+        "Total Cost": metrics.totalCost.toFixed(2),
+        Status: metrics.isContaminated ? "Contaminated" : "Clean",
+      };
+    });
+    
+    exportToCSV(
+      exportData,
+      `buy-orders-${format(new Date(), "yyyy-MM-dd")}.csv`
+    );
+    toast.success(`Exported ${exportData.length} buy orders`);
+  };
+
   if (isPending) {
     return <Loader />;
   }
@@ -637,7 +685,19 @@ export default function Orders() {
       {orderType === "sell" ? (
         <Card>
           <CardHeader className="px-7">
-            <CardTitle>Sell Orders</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Sell Orders</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportSellOrders}
+                className="gap-2"
+                disabled={filteredSellOrders.length === 0}
+              >
+                <Download className="h-4 w-4" />
+                Export CSV
+              </Button>
+            </div>
             <div className="flex gap-4 flex-wrap">
               <CardDescription className="text-lg font-semibold text-green-600">
                 Total Revenue: {formatCurrency(sellOrderTotals.totalRevenue)}
@@ -747,7 +807,19 @@ export default function Orders() {
       ) : (
         <Card>
           <CardHeader className="px-7">
-            <CardTitle>Buy Orders</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Buy Orders</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportBuyOrders}
+                className="gap-2"
+                disabled={filteredBuyOrders.length === 0}
+              >
+                <Download className="h-4 w-4" />
+                Export CSV
+              </Button>
+            </div>
             <div className="flex gap-4 flex-wrap">
               <CardDescription className="text-lg font-semibold">
                 Total Cost: {formatCurrency(buyOrderTotals.totalCost)}
