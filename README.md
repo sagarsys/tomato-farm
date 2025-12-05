@@ -43,6 +43,7 @@ This app helps Georgie:
 ### 🚜 Farms Page
 
 - **10,000 farms** with full data table (TanStack Table)
+- **Virtual scrolling**: Smooth performance with only visible rows rendered
 - **Contamination tracking** per farm (status, rate, order count)
 - **Sortable columns**: Name, Orders, Volume, Contamination Rate
 - **Filter by status**: Contaminated only, Clean only
@@ -78,6 +79,7 @@ This app helps Georgie:
 - **Routing**: React Router v6
 - **State Management**: TanStack Query (React Query)
 - **Tables**: TanStack Table
+- **Virtualization**: TanStack Virtual
 - **Charts**: Recharts (available)
 - **Icons**: Lucide React
 - **Notifications**: React Hot Toast
@@ -197,7 +199,8 @@ lostRevenue = sum(contaminatedOrders.revenue)
 - **TanStack Query**: Shared caching across components
 - **useMemo**: Expensive calculations memoized
 - **TanStack Table**: Efficient rendering for large datasets
-- **Pagination**: 50 rows per page for optimal performance
+- **Virtual Scrolling**: Only renders visible rows (~30-40 at a time) for 10K+ datasets
+- **Row Virtualization**: 60fps smooth scrolling with 20-item overscan buffer
 
 ### Type Safety
 
@@ -214,7 +217,7 @@ lostRevenue = sum(contaminatedOrders.revenue)
 
 ## 📈 Future Enhancements
 
-- [ ] Table virtualization for 10K+ rows (smooth scrolling)
+- [x] ~~Table virtualization for 10K+ rows~~ ✅ **Implemented**
 - [ ] Time-series charts for trends over time
 - [ ] Advanced search across all entities
 - [ ] Farm remediation workflow and tracking
