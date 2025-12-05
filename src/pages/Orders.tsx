@@ -60,6 +60,7 @@ import Loader from "../common/Loader";
 import { BuyOrder } from "../data/types";
 import { EmptyState } from "../components/EmptyState";
 import { exportToCSV } from "../utils/csvExport";
+import { CreateOrderModal } from "../components/CreateOrderModal";
 
 type OrderType = "buy" | "sell";
 
@@ -386,6 +387,7 @@ export default function Orders() {
   const [showOnlyContaminated, setShowOnlyContaminated] = useState(false);
   const [showOnlyClean, setShowOnlyClean] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [isCreateOrderModalOpen, setIsCreateOrderModalOpen] = useState(false);
 
   // Fetch orders data
   const {
@@ -675,7 +677,7 @@ export default function Orders() {
         <Button
           variant="default"
           className="gap-2"
-          onClick={() => toast("Create order feature coming soon!", { icon: "🚧" })}
+          onClick={() => setIsCreateOrderModalOpen(true)}
         >
           <FaPlus />
           Create Order
@@ -921,6 +923,13 @@ export default function Orders() {
           </CardContent>
         </Card>
       )}
+
+      {/* Create Order Modal */}
+      <CreateOrderModal
+        open={isCreateOrderModalOpen}
+        onOpenChange={setIsCreateOrderModalOpen}
+        orderType={orderType}
+      />
     </>
   );
 }
