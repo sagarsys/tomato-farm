@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowUpDown, ChevronDown, MoreHorizontal, AlertTriangle, TractorIcon, Download } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -310,7 +311,6 @@ const Farms = () => {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -321,6 +321,16 @@ const Farms = () => {
       columnVisibility,
       rowSelection,
     },
+  });
+
+  // Set up virtualization
+  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+  
+  const rowVirtualizer = useVirtualizer({
+    count: table.getRowModel().rows.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 53, // Estimated row height
+    overscan: 20, // Number of items to render outside visible area
   });
 
   const handleExportFarms = () => {
@@ -450,97 +460,102 @@ const Farms = () => {
           </DropdownMenu>
         </div>
         <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
+          {table.getRowModel().rows.length === 0 ? (
+            <div className="p-8">
+              <EmptyState
+                icon={TractorIcon}
+                title="No farms found"
+                description={
+                  showOnlyContaminated || showOnlyClean || columnFilters.length > 0
+                    ? "Try adjusting your search or filters to see more results."
+                    : "There are no farms available at the moment."
+                }
+                actionLabel={
+                  showOnlyContaminated || showOnlyClean || columnFilters.length > 0
+                    ? "Clear filters"
+                    : undefined
+                }
+                onAction={
+                  showOnlyContaminated || showOnlyClean || columnFilters.length > 0
+                    ? () => {
+                        setShowOnlyContaminated(false);
+                        setShowOnlyClean(false);
+                        setColumnFilters([]);
+                      }
+                    : undefined
+                }
+              />
+            </div>
+          ) : (
+            <>
+              <div
+                ref={tableContainerRef}
+                className="overflow-auto relative"
+                style={{ height: "600px" }}
+              >
+                <Table>
+                  <TableHeader className="sticky top-0 bg-background z-10">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => {
+                          return (
+                            <TableHead key={header.id}>
+                              {header.isPlaceholder
+                                ? null
+                                : flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                  )}
+                            </TableHead>
+                          );
+                        })}
+                      </TableRow>
                     ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="p-0">
-                    <EmptyState
-                      icon={TractorIcon}
-                      title="No farms found"
-                      description={
-                        showOnlyContaminated || showOnlyClean || columnFilters.length > 0
-                          ? "Try adjusting your search or filters to see more results."
-                          : "There are no farms available at the moment."
-                      }
-                      actionLabel={
-                        showOnlyContaminated || showOnlyClean || columnFilters.length > 0
-                          ? "Clear filters"
-                          : undefined
-                      }
-                      onAction={
-                        showOnlyContaminated || showOnlyClean || columnFilters.length > 0
-                          ? () => {
-                              setShowOnlyContaminated(false);
-                              setShowOnlyClean(false);
-                              setColumnFilters([]);
-                            }
-                          : undefined
-                      }
-                    />
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
+                  </TableHeader>
+                  <TableBody>
+                    <tr style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
+                      {/* Spacer to maintain scroll height */}
+                    </tr>
+                    {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                      const row = table.getRowModel().rows[virtualRow.index];
+                      return (
+                        <TableRow
+                          key={row.id}
+                          data-state={row.getIsSelected() && "selected"}
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            transform: `translateY(${virtualRow.start}px)`,
+                          }}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="flex items-center justify-between px-2 py-4 border-t">
+                <div className="flex-1 text-sm text-muted-foreground">
+                  {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                  {table.getFilteredRowModel().rows.length} row(s) selected.
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Showing {rowVirtualizer.getVirtualItems().length} of{" "}
+                  {table.getRowModel().rows.length} farms
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
