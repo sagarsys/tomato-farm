@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Tractor, Warehouse, Store, ShoppingCart, Package } from "lucide-react";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Search, Tractor, Warehouse, Store, ShoppingCart, Package, X } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { useGlobalSearch, SearchResultType } from "@/hooks/useGlobalSearch";
+import { cn } from "@/lib/utils";
 
 const icons: Record<SearchResultType, any> = {
   farm: Tractor,
@@ -35,7 +30,7 @@ export function GlobalSearch() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        setOpen((open) => !open);
+        setOpen((prev) => !prev);
       }
     };
 
@@ -43,10 +38,16 @@ export function GlobalSearch() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Reset query when closing
+  useEffect(() => {
+    if (!open) {
+      setQuery("");
+    }
+  }, [open]);
+
   // Close modal when navigating
   const handleSelect = (url: string) => {
     setOpen(false);
-    setQuery("");
     navigate(url);
   };
 
@@ -74,169 +75,213 @@ export function GlobalSearch() {
       </button>
 
       {/* Search Modal */}
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput
-          placeholder="Search farms, warehouses, stores, orders..."
-          value={query}
-          onValueChange={setQuery}
-        />
-        <CommandList>
-          {query.trim().length >= 2 && totalResults === 0 && (
-            <CommandEmpty>No results found for "{query}"</CommandEmpty>
-          )}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="p-0 gap-0 max-w-2xl">
+          {/* Search Input */}
+          <div className="flex items-center border-b px-4 py-3">
+            <Search className="mr-3 h-5 w-5 shrink-0 opacity-50" />
+            <Input
+              placeholder="Search farms, warehouses, stores, orders..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 px-0"
+              autoFocus
+            />
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                className="ml-2 hover:bg-accent rounded-sm p-1"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
 
-          {query.trim().length < 2 && (
-            <div className="py-6 text-center text-sm text-muted-foreground">
-              Type at least 2 characters to search
-            </div>
-          )}
-
-          {/* Farms */}
-          {groupedResults.farm && (
-            <CommandGroup heading="Farms">
-              {groupedResults.farm.map((result) => {
-                const Icon = icons[result.type];
-                return (
-                  <CommandItem
-                    key={result.id}
-                    onSelect={() => handleSelect(result.url)}
-                    className="cursor-pointer"
-                  >
-                    <Icon className="mr-2 h-4 w-4 text-green-600" />
-                    <div className="flex-1">
-                      <div className="font-medium">{result.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {result.subtitle}
-                      </div>
+          {/* Results */}
+          <div className="max-h-[400px] overflow-y-auto p-2">
+            {query.trim().length < 2 ? (
+              <div className="py-8 text-center text-sm text-muted-foreground">
+                Type at least 2 characters to search
+              </div>
+            ) : totalResults === 0 ? (
+              <div className="py-8 text-center text-sm text-muted-foreground">
+                No results found for "{query}"
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Farms */}
+                {groupedResults.farm && groupedResults.farm.length > 0 && (
+                  <div>
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                      Farms
                     </div>
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
-          )}
-
-          {/* Warehouses */}
-          {groupedResults.warehouse && (
-            <CommandGroup heading="Warehouses">
-              {groupedResults.warehouse.map((result) => {
-                const Icon = icons[result.type];
-                return (
-                  <CommandItem
-                    key={result.id}
-                    onSelect={() => handleSelect(result.url)}
-                    className="cursor-pointer"
-                  >
-                    <Icon className="mr-2 h-4 w-4 text-blue-600" />
-                    <div className="flex-1">
-                      <div className="font-medium">{result.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {result.subtitle}
-                      </div>
+                    <div className="space-y-1">
+                      {groupedResults.farm.map((result) => {
+                        const Icon = icons[result.type];
+                        return (
+                          <button
+                            key={result.id}
+                            onClick={() => handleSelect(result.url)}
+                            className="w-full flex items-center gap-3 px-2 py-2 rounded-sm hover:bg-accent transition-colors text-left"
+                          >
+                            <Icon className="h-4 w-4 text-green-600 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm truncate">{result.title}</div>
+                              <div className="text-xs text-muted-foreground truncate">
+                                {result.subtitle}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
-          )}
+                  </div>
+                )}
 
-          {/* Stores */}
-          {groupedResults.store && (
-            <CommandGroup heading="Stores">
-              {groupedResults.store.map((result) => {
-                const Icon = icons[result.type];
-                return (
-                  <CommandItem
-                    key={result.id}
-                    onSelect={() => handleSelect(result.url)}
-                    className="cursor-pointer"
-                  >
-                    <Icon className="mr-2 h-4 w-4 text-purple-600" />
-                    <div className="flex-1">
-                      <div className="font-medium">{result.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {result.subtitle}
-                      </div>
+                {/* Warehouses */}
+                {groupedResults.warehouse && groupedResults.warehouse.length > 0 && (
+                  <div>
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                      Warehouses
                     </div>
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
-          )}
+                    <div className="space-y-1">
+                      {groupedResults.warehouse.map((result) => {
+                        const Icon = icons[result.type];
+                        return (
+                          <button
+                            key={result.id}
+                            onClick={() => handleSelect(result.url)}
+                            className="w-full flex items-center gap-3 px-2 py-2 rounded-sm hover:bg-accent transition-colors text-left"
+                          >
+                            <Icon className="h-4 w-4 text-blue-600 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm truncate">{result.title}</div>
+                              <div className="text-xs text-muted-foreground truncate">
+                                {result.subtitle}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-          {/* Buy Orders */}
-          {groupedResults["buy-order"] && (
-            <CommandGroup heading="Buy Orders">
-              {groupedResults["buy-order"].map((result) => {
-                const Icon = icons[result.type];
-                return (
-                  <CommandItem
-                    key={result.id}
-                    onSelect={() => handleSelect(result.url)}
-                    className="cursor-pointer"
-                  >
-                    <Icon className="mr-2 h-4 w-4 text-orange-600" />
-                    <div className="flex-1">
-                      <div className="font-medium text-sm">{result.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {result.subtitle}
-                      </div>
+                {/* Stores */}
+                {groupedResults.store && groupedResults.store.length > 0 && (
+                  <div>
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                      Stores
                     </div>
-                    {result.metadata && (
-                      <Badge
-                        variant={
-                          result.metadata === "Contaminated"
-                            ? "destructive"
-                            : "default"
-                        }
-                        className="ml-2 text-xs"
-                      >
-                        {result.metadata}
-                      </Badge>
-                    )}
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
-          )}
+                    <div className="space-y-1">
+                      {groupedResults.store.map((result) => {
+                        const Icon = icons[result.type];
+                        return (
+                          <button
+                            key={result.id}
+                            onClick={() => handleSelect(result.url)}
+                            className="w-full flex items-center gap-3 px-2 py-2 rounded-sm hover:bg-accent transition-colors text-left"
+                          >
+                            <Icon className="h-4 w-4 text-purple-600 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm truncate">{result.title}</div>
+                              <div className="text-xs text-muted-foreground truncate">
+                                {result.subtitle}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-          {/* Sell Orders */}
-          {groupedResults["sell-order"] && (
-            <CommandGroup heading="Sell Orders">
-              {groupedResults["sell-order"].map((result) => {
-                const Icon = icons[result.type];
-                return (
-                  <CommandItem
-                    key={result.id}
-                    onSelect={() => handleSelect(result.url)}
-                    className="cursor-pointer"
-                  >
-                    <Icon className="mr-2 h-4 w-4 text-green-600" />
-                    <div className="flex-1">
-                      <div className="font-medium text-sm">{result.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {result.subtitle}
-                      </div>
+                {/* Buy Orders */}
+                {groupedResults["buy-order"] && groupedResults["buy-order"].length > 0 && (
+                  <div>
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                      Buy Orders
                     </div>
-                    {result.metadata && (
-                      <Badge
-                        variant={
-                          result.metadata === "Contaminated"
-                            ? "destructive"
-                            : "default"
-                        }
-                        className="ml-2 text-xs"
-                      >
-                        {result.metadata}
-                      </Badge>
-                    )}
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
-          )}
-        </CommandList>
-      </CommandDialog>
+                    <div className="space-y-1">
+                      {groupedResults["buy-order"].map((result) => {
+                        const Icon = icons[result.type];
+                        return (
+                          <button
+                            key={result.id}
+                            onClick={() => handleSelect(result.url)}
+                            className="w-full flex items-center gap-3 px-2 py-2 rounded-sm hover:bg-accent transition-colors text-left"
+                          >
+                            <Icon className="h-4 w-4 text-orange-600 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm truncate">{result.title}</div>
+                              <div className="text-xs text-muted-foreground truncate">
+                                {result.subtitle}
+                              </div>
+                            </div>
+                            {result.metadata && (
+                              <Badge
+                                variant={
+                                  result.metadata === "Contaminated"
+                                    ? "destructive"
+                                    : "default"
+                                }
+                                className="text-xs shrink-0"
+                              >
+                                {result.metadata}
+                              </Badge>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Sell Orders */}
+                {groupedResults["sell-order"] && groupedResults["sell-order"].length > 0 && (
+                  <div>
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                      Sell Orders
+                    </div>
+                    <div className="space-y-1">
+                      {groupedResults["sell-order"].map((result) => {
+                        const Icon = icons[result.type];
+                        return (
+                          <button
+                            key={result.id}
+                            onClick={() => handleSelect(result.url)}
+                            className="w-full flex items-center gap-3 px-2 py-2 rounded-sm hover:bg-accent transition-colors text-left"
+                          >
+                            <Icon className="h-4 w-4 text-green-600 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm truncate">{result.title}</div>
+                              <div className="text-xs text-muted-foreground truncate">
+                                {result.subtitle}
+                              </div>
+                            </div>
+                            {result.metadata && (
+                              <Badge
+                                variant={
+                                  result.metadata === "Contaminated"
+                                    ? "destructive"
+                                    : "default"
+                                }
+                                className="text-xs shrink-0"
+                              >
+                                {result.metadata}
+                              </Badge>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
-

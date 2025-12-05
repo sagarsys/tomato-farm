@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { farms, warehouses, stores, buyOrders, sellOrders } from "@/services/mockData";
 import { calculateSellOrderMetrics } from "@/features/orders/utils/orderCalculations";
 import { format } from "date-fns";
@@ -21,31 +20,6 @@ export interface SearchResult {
  * Searches: Farms, Warehouses, Stores, Buy Orders, Sell Orders
  */
 export function useGlobalSearch(query: string) {
-  const { data: allFarms = [] } = useQuery({
-    queryKey: ["farms"],
-    queryFn: async () => farms,
-  });
-
-  const { data: allWarehouses = [] } = useQuery({
-    queryKey: ["warehouses"],
-    queryFn: async () => warehouses,
-  });
-
-  const { data: allStores = [] } = useQuery({
-    queryKey: ["stores"],
-    queryFn: async () => stores,
-  });
-
-  const { data: allBuyOrders = [] } = useQuery({
-    queryKey: ["buyOrders"],
-    queryFn: async () => buyOrders,
-  });
-
-  const { data: allSellOrders = [] } = useQuery({
-    queryKey: ["sellOrders"],
-    queryFn: async () => sellOrders,
-  });
-
   const results = useMemo(() => {
     if (!query || query.trim().length < 2) {
       return [];
@@ -55,7 +29,7 @@ export function useGlobalSearch(query: string) {
     const results: SearchResult[] = [];
 
     // Search Farms
-    allFarms.forEach((farm) => {
+    farms.forEach((farm) => {
       if (
         farm.name.toLowerCase().includes(searchTerm) ||
         farm.city.toLowerCase().includes(searchTerm) ||
@@ -73,7 +47,7 @@ export function useGlobalSearch(query: string) {
     });
 
     // Search Warehouses
-    allWarehouses.forEach((warehouse) => {
+    warehouses.forEach((warehouse) => {
       if (
         warehouse.name.toLowerCase().includes(searchTerm) ||
         warehouse.city.toLowerCase().includes(searchTerm) ||
@@ -91,7 +65,7 @@ export function useGlobalSearch(query: string) {
     });
 
     // Search Stores
-    allStores.forEach((store) => {
+    stores.forEach((store) => {
       if (
         store.name.toLowerCase().includes(searchTerm) ||
         store.city.toLowerCase().includes(searchTerm) ||
@@ -109,7 +83,7 @@ export function useGlobalSearch(query: string) {
     });
 
     // Search Buy Orders
-    allBuyOrders.slice(0, 100).forEach((order) => {
+    buyOrders.slice(0, 100).forEach((order) => {
       if (
         order.id.toLowerCase().includes(searchTerm) ||
         order.supplier.name.toLowerCase().includes(searchTerm) ||
@@ -128,7 +102,7 @@ export function useGlobalSearch(query: string) {
     });
 
     // Search Sell Orders
-    allSellOrders.slice(0, 100).forEach((order) => {
+    sellOrders.slice(0, 100).forEach((order) => {
       const metrics = calculateSellOrderMetrics(order);
       if (
         order.id.toLowerCase().includes(searchTerm) ||
@@ -148,7 +122,7 @@ export function useGlobalSearch(query: string) {
 
     // Limit results
     return results.slice(0, 50);
-  }, [query, allFarms, allWarehouses, allStores, allBuyOrders, allSellOrders]);
+  }, [query]);
 
   return {
     results,
