@@ -10,7 +10,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
-import { useGlobalSearch, SearchResultType } from "@/lib/useGlobalSearch";
+import { useGlobalSearch, SearchResultType } from "@/hooks/useGlobalSearch";
 
 const icons: Record<SearchResultType, any> = {
   farm: Tractor,
