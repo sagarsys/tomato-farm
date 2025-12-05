@@ -38,6 +38,13 @@ This app helps Georgie:
 ### 🔗 Supply Chain Visualization
 
 - **Visual Flow Diagram**: Farms → Warehouses → Stores with order counts
+- **Interactive Flow Diagram**: React Flow network with 90 nodes
+  - Drag nodes to rearrange
+  - Zoom & pan to explore
+  - Color-coded by entity type
+  - Red borders for contamination
+  - Animated dashed lines for contaminated paths
+  - Mini-map for navigation
 - **Volume Metrics**: Track volume at each stage (purchased, stored, sold, lost)
 - **Contamination Impact**: Impact breakdown at each supply chain level
 - **Top Supply Routes**: Best-performing Farm → Warehouse → Store paths
@@ -83,7 +90,8 @@ This app helps Georgie:
 - **State Management**: TanStack Query (React Query)
 - **Tables**: TanStack Table
 - **Virtualization**: TanStack Virtual
-- **Charts**: Recharts (available)
+- **Charts**: Recharts
+- **Flow Diagrams**: React Flow (@xyflow/react)
 - **Icons**: Lucide React
 - **Notifications**: React Hot Toast
 - **Mock Data**: Faker.js
