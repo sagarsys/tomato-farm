@@ -10,8 +10,9 @@ import { SupplyChainFlowCard } from "./components/SupplyChainFlowCard";
 import { FlowArrow } from "./components/FlowArrow";
 import { MetricCard } from "@/features/dashboard/components/MetricCard";
 import { SupplyChainRoutesWidget } from "./components/SupplyChainRoutesWidget";
+import { InteractiveFlowDiagram } from "./components/InteractiveFlowDiagram";
 import { useSupplyChainMetrics } from "./hooks/useSupplyChainMetrics";
-import {  } from "@/features/orders/utils/orderCalculations";
+import { formatCurrency, formatVolume } from "@/lib/format";
 import Loader from "@/components/Loader";
 
 export default function SupplyChain() {
@@ -89,32 +90,35 @@ export default function SupplyChain() {
         </CardContent>
       </Card>
 
+      {/* Interactive Flow Diagram */}
+      <InteractiveFlowDiagram />
+
       {/* Section 2: Flow Metrics Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="Volume Purchased"
-          value={`${(volumePurchased)} kg`}
+          value={`${formatVolume(volumePurchased)} kg`}
           subtitle="From farms"
           icon={Tractor}
           iconColor="text-green-600"
         />
         <MetricCard
           title="Volume in Storage"
-          value={`${(volumePurchased)} kg`}
+          value={`${formatVolume(volumePurchased)} kg`}
           subtitle="In warehouses"
           icon={Warehouse}
           iconColor="text-blue-600"
         />
         <MetricCard
           title="Volume Sold"
-          value={`${(volumeSold)} kg`}
+          value={`${formatVolume(volumeSold)} kg`}
           subtitle="To stores"
           icon={Store}
           iconColor="text-purple-600"
         />
         <MetricCard
           title="Volume Loss"
-          value={`${(volumeLoss)} kg`}
+          value={`${formatVolume(volumeLoss)} kg`}
           subtitle="Contamination/Waste"
           icon={AlertTriangle}
           iconColor="text-red-600"
