@@ -1,7 +1,7 @@
 /**
  * Format a number as currency (USD)
  */
-export function (value: number): string {
+export function formatCurrency(value: number): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -13,7 +13,7 @@ export function (value: number): string {
 /**
  * Format a number with thousand separators
  */
-export function (value: number): string {
+export function formatVolume(value: number): string {
   return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
