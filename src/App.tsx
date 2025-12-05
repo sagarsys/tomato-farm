@@ -25,32 +25,10 @@ function App() {
         <Toaster {...TOAST_CONFIG} />
         <DefaultLayout>
           <Routes>
-            <Route
-              index
-              element={
-                <>
-                  <Dashboard />
-                </>
-              }
-            />
+            <Route index element={<Dashboard />} />
             <Route path="/farms" element={<Farms />} />
             <Route path="/supply-chain" element={<SupplyChain />} />
-            <Route
-              path="/clients"
-              element={
-                <>
-                  <Farms />
-                </>
-              }
-            />
-            <Route
-              path="/orders"
-              element={
-                <>
-                  <Orders />
-                </>
-              }
-            />
+            <Route path="/orders" element={<Orders />} />
           </Routes>
         </DefaultLayout>
       </QueryClientProvider>
