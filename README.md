@@ -30,6 +30,8 @@ This app helps Georgie:
 
 - **Key Metrics Cards**: Total Revenue, Profit, Profit Margin, Volume Sold
 - **Contamination Impact Widget**: Shows lost revenue, affected orders, and contamination rate
+- **Revenue & Profit Trends**: 30-day line chart showing financial performance
+- **Contamination Trends**: 14-day bar chart showing clean vs contaminated orders
 - **Top Performing Farms**: Ranked list of farms by volume
 - **Recent Orders**: Latest transactions with revenue and status
 
@@ -256,13 +258,15 @@ lostRevenue = sum(contaminatedOrders.revenue)
 ## 📈 Future Enhancements
 
 - [x] ~~Table virtualization for 10K+ rows~~ ✅ **Implemented**
-- [x] ~~Advanced search across all entities~~ ✅ **Implemented**
-- [ ] Time-series charts for trends over time
+- [x] ~~Advanced search across all entities~~ ✅ **Implemented**  
+- [x] ~~Time-series charts for trends over time~~ ✅ **Implemented**
 - [ ] Farm remediation workflow and tracking
 - [ ] Real-time data updates with WebSockets
 - [ ] Batch operations for orders and farms
 - [ ] Email notifications for contamination alerts
 - [ ] Historical data comparison and analytics
+- [ ] Drill-down from charts to detailed views
+- [ ] Forecasting and predictive analytics
 
 ## 📄 License
 
