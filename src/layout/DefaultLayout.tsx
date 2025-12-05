@@ -15,6 +15,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { CircleUser, Menu, Moon, Sun } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { GlobalSearch } from "@/components/GlobalSearch";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -148,6 +149,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
           </SheetContent>
         </Sheet>
         <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+          <GlobalSearch />
           <Button
             variant="outline"
             size="icon"
