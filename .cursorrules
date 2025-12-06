@@ -12,6 +12,45 @@ When implementing new features or libraries:
 - Do NOT commit changes until explicitly asked
 - Focus on learning and understanding
 
+# Pre-Implementation Analysis (MANDATORY)
+
+**Before implementing ANY new feature in a file/feature:**
+
+1. **Analyze Current State**
+   - Check file line count (target: pages < 150 lines, components < 100 lines)
+   - Identify repeated patterns, inline logic, or large JSX blocks
+   - Look for state/handlers that could be extracted to hooks
+
+2. **Simplify First, Then Implement**
+   - Extract components if JSX is complex or repeated
+   - Extract hooks if there's reusable state logic or side effects
+   - Extract utils/constants if there are calculations or config objects
+   - Move column definitions, form schemas, etc. to separate files
+
+3. **Extraction Checklist**
+
+   | Extract To | When |
+   |------------|------|
+   | `components/` | JSX > 30 lines, reusable UI blocks |
+   | `hooks/` | State + handlers, data fetching, side effects |
+   | `utils/` | Pure functions, calculations, formatters |
+   | `constants.ts` | Config objects, enums, static data |
+
+4. **Only After Simplification**
+   - Implement the new feature in the clean, organized codebase
+   - New code should follow the same patterns established
+
+**Example workflow:**
+
+```
+User: "Add export functionality to Orders page"
+
+Step 1: Analyze Orders.page.tsx (400 lines - too large!)
+Step 2: Extract OrdersTable component (~100 lines saved)
+Step 3: Extract useOrdersTable hook (~80 lines saved)
+Step 4: Now implement export in the clean structure
+```
+
 # Coding Guidelines
 
 Follow these guidelines to ensure your code is clean, maintainable, and adheres to best practices. Remember, less code is better. Lines of code = Debt.
@@ -37,16 +76,16 @@ Code Guidelines
 
 Comments and Documentation
 
-* **Function Comments**: Add a comment at the start of each function describing what it does.
-* **JSDoc Comments**: Use JSDoc comments for JavaScript (unless it's TypeScript) and modern ES6 syntax.
+- **Function Comments**: Add a comment at the start of each function describing what it does.
+- **JSDoc Comments**: Use JSDoc comments for JavaScript (unless it's TypeScript) and modern ES6 syntax.
 
 Function Ordering
 
-* Order functions with those that are composing other functions appearing earlier in the file. For example, if you have a menu with multiple buttons, define the menu function above the buttons.
+- Order functions with those that are composing other functions appearing earlier in the file. For example, if you have a menu with multiple buttons, define the menu function above the buttons.
 
 Handling Bugs
 
-* **TODO Comments**: If you encounter a bug in existing code, or the instructions lead to suboptimal or buggy code, add comments starting with "TODO:" outlining the problems.
+- **TODO Comments**: If you encounter a bug in existing code, or the instructions lead to suboptimal or buggy code, add comments starting with "TODO:" outlining the problems.
 
 Example Pseudocode Plan and Implementation
 
@@ -79,44 +118,51 @@ src/
 ## Feature Module Structure
 
 Each feature is **self-contained** with:
-* `FeatureName.page.tsx` - Main page component
-* `components/` - Feature-specific components
-* `hooks/` - Feature-specific hooks
-* `utils/` - Feature-specific utilities
-* `index.ts` - Public exports
+
+- `FeatureName.page.tsx` - Main page component
+- `components/` - Feature-specific components
+- `hooks/` - Feature-specific hooks
+- `utils/` - Feature-specific utilities
+- `index.ts` - Public exports
 
 ## Path Alias (@/)
 
 Always use the `@/` alias for imports:
-* ✅ `import { Button } from "@/components/ui/button"`
-* ✅ `import { formatCurrency } from "@/lib/format"`
-* ✅ `import { useOrdersData } from "@/features/orders/hooks/useOrdersData"`
-* ❌ `import { Button } from "../../components/ui/button"`
+
+- ✅ `import { Button } from "@/components/ui/button"`
+- ✅ `import { formatCurrency } from "@/lib/format"`
+- ✅ `import { useOrdersData } from "@/features/orders/hooks/useOrdersData"`
+- ❌ `import { Button } from "../../components/ui/button"`
 
 Within a feature, use relative imports:
-* ✅ `import { OrderModal } from "./components/OrderModal"`
-* ✅ `import { useOrderFilters } from "./hooks/useOrderFilters"`
+
+- ✅ `import { OrderModal } from "./components/OrderModal"`
+- ✅ `import { useOrderFilters } from "./hooks/useOrderFilters"`
 
 ## Code Organization Rules
 
 **1. Extract Large Components**
-* Page files should be < 300 lines
-* Extract column definitions to `utils/` files
-* Extract complex JSX to separate components
-* Move business logic to hooks or utils
+
+- Page files should be < 300 lines
+- Extract column definitions to `utils/` files
+- Extract complex JSX to separate components
+- Move business logic to hooks or utils
 
 **2. Component Placement**
-* Feature-specific → `features/{name}/components/`
-* Reusable across features → `src/components/`
-* UI primitives → `src/components/ui/`
+
+- Feature-specific → `features/{name}/components/`
+- Reusable across features → `src/components/`
+- UI primitives → `src/components/ui/`
 
 **3. Hook Placement**
-* Feature-specific → `features/{name}/hooks/`
-* Global/shared → `src/hooks/`
+
+- Feature-specific → `features/{name}/hooks/`
+- Global/shared → `src/hooks/`
 
 **4. Utility Placement**
-* Feature-specific calculations → `features/{name}/utils/`
-* Shared utilities → `src/lib/`
+
+- Feature-specific calculations → `features/{name}/utils/`
+- Shared utilities → `src/lib/`
 
 ## Import Order
 

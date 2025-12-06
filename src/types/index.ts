@@ -33,3 +33,6 @@ export type SellOrder = {
   destination: Store;
   pricePerUnit: number; // $
 };
+
+// Re-export remediation types
+export type { RemediationStatus, RemediationRecord, RemediationHistoryEntry } from "./remediation";
