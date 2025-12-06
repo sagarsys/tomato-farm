@@ -8,6 +8,9 @@ export default defineConfig({
   html: {
     template: "./public/index.html",
   },
+  server: {
+    port: 3333,
+  },
   output: {
     distPath: {
       root: "build",
