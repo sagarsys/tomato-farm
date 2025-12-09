@@ -276,6 +276,26 @@ lostRevenue = sum(contaminatedOrders.revenue)
 - [ ] Drill-down from charts to detailed views
 - [ ] Forecasting and predictive analytics
 
+## 🚀 Deployment
+
+This project is configured for **automatic deployment to Vercel** via GitHub Actions.
+
+### Quick Start (2 Steps)
+
+1. **Get Vercel token** at [vercel.com/account/tokens](https://vercel.com/account/tokens)
+2. **Add `VERCEL_TOKEN` secret** in GitHub repo settings
+
+That's it! Push to `main` → Auto-deploys to production 🎉
+
+### Deployment Workflow
+
+| Trigger | Environment |
+|---------|-------------|
+| Push to `main` | Production |
+| Pull Request | Preview (with comment) |
+
+📖 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed setup instructions.
+
 ## 📄 License
 
 MIT License
