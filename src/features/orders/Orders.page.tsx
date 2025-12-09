@@ -55,10 +55,13 @@ import {
 } from "./utils/orderCalculations";
 import { formatCurrency, formatVolume } from "@/lib/format";
 import { useOrdersData } from "./hooks/useOrdersData";
+import { useOrdersAnalytics } from "./hooks/useOrdersAnalytics";
 import Loader from "@/components/Loader";
 import { EmptyState } from "@/components/EmptyState";
 import { exportToCSV } from "@/lib/csvExport";
 import { CreateOrderModal } from "./components/CreateOrderModal";
+import { OrdersAnalyticsWidget } from "./components/OrdersAnalyticsWidget";
+import { OrdersTrendChart } from "./components/OrdersTrendChart";
 import { sellOrderColumns, buyOrderColumns } from "./utils/orderColumns";
 
 type OrderType = "buy" | "sell";
@@ -79,6 +82,13 @@ export default function Orders() {
     sellOrders: sellOrdersData,
     isPending,
   } = useOrdersData();
+
+  // Analytics for historical comparison
+  const { comparison, dailyData, previousDailyData, periodDays } = useOrdersAnalytics(
+    sellOrdersData,
+    buyOrdersData,
+    30
+  );
 
   // Filter orders by date range and contamination status
   const filteredBuyOrders = useMemo(() => {
@@ -260,7 +270,18 @@ export default function Orders() {
   }
 
   return (
-    <>
+    <div className="space-y-4">
+      {/* Analytics Widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <OrdersAnalyticsWidget comparison={comparison} periodDays={periodDays} />
+        <OrdersTrendChart
+          dailyData={dailyData}
+          previousDailyData={previousDailyData}
+          periodDays={periodDays}
+        />
+      </div>
+
+      {/* Filters and Controls */}
       <div className="flex gap-4 justify-between flex-wrap">
         <div className="flex gap-4 flex-wrap">
           <Select value={orderType} onValueChange={(value) => setOrderType(value as OrderType)}>
@@ -614,6 +635,6 @@ export default function Orders() {
         onOpenChange={setIsCreateOrderModalOpen}
         orderType={orderType}
       />
-    </>
+    </div>
   );
 }
