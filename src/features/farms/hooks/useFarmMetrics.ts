@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useOrdersData } from "@/features/orders/hooks/useOrdersData";
 import { Farm } from "@/types";
 
@@ -63,10 +63,10 @@ export const useFarmMetrics = () => {
       .slice(0, 10);
   }, [farmMetricsMap]);
 
-  // Get metrics for a specific farm
-  const getFarmMetrics = (farmId: string): FarmMetrics | undefined => {
+  // Get metrics for a specific farm - memoized to prevent infinite re-renders
+  const getFarmMetrics = useCallback((farmId: string): FarmMetrics | undefined => {
     return farmMetricsMap.get(farmId);
-  };
+  }, [farmMetricsMap]);
 
   return {
     farmMetricsMap,
