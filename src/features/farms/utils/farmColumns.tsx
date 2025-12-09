@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, AlertTriangle, Wrench } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Wrench } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
@@ -138,7 +138,7 @@ export const createFarmColumns = ({
         return <Badge variant="outline">No Orders</Badge>;
       }
 
-      return <RemediationStatusBadge farmId={farmId} />;
+      return <RemediationStatusBadge farmId={farmId} isContaminated={metrics.isContaminated} />;
     },
     sortingFn: (rowA, rowB) => {
       const metricsA = getFarmMetrics(rowA.original.id);
@@ -194,7 +194,6 @@ export const createFarmColumns = ({
       const farm = row.original;
       const metrics = getFarmMetrics(farm.id);
       const isContaminated = metrics?.isContaminated;
-      const underRemediationStatus = isUnderRemediation(farm.id);
 
       return (
         <DropdownMenu>
@@ -214,7 +213,7 @@ export const createFarmColumns = ({
             >
               Copy farm ID
             </DropdownMenuItem>
-            {isContaminated && !underRemediationStatus && (
+            {isContaminated && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -223,15 +222,6 @@ export const createFarmColumns = ({
                 >
                   <Wrench className="mr-2 h-4 w-4" />
                   Start Remediation
-                </DropdownMenuItem>
-              </>
-            )}
-            {underRemediationStatus && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem disabled className="text-orange-600">
-                  <Wrench className="mr-2 h-4 w-4" />
-                  Under Remediation
                 </DropdownMenuItem>
               </>
             )}

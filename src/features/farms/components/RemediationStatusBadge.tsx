@@ -15,13 +15,21 @@ import toast from "react-hot-toast";
 
 interface RemediationStatusBadgeProps {
   farmId: string;
+  isContaminated?: boolean; // From farm metrics - determines initial state
 }
 
 /**
  * Badge showing remediation status with dropdown to progress to next status
  */
-export function RemediationStatusBadge({ farmId }: RemediationStatusBadgeProps) {
-  const status = useRemediationStatus(farmId);
+export function RemediationStatusBadge({ farmId, isContaminated = false }: RemediationStatusBadgeProps) {
+  const remediationStatus = useRemediationStatus(farmId);
+  
+  // Determine effective status: use remediation status if exists, otherwise use contamination state
+  const status = remediationStatus !== RemediationStatus.None 
+    ? remediationStatus 
+    : isContaminated 
+      ? RemediationStatus.Contaminated 
+      : RemediationStatus.Clean;
   /**
    * Handle status change
    */

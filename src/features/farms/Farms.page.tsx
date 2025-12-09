@@ -12,6 +12,8 @@ import { createFarmColumns } from "./utils/farmColumns";
 import { FarmsTable } from "./components/FarmsTable";
 import { FarmsToolbar } from "./components/FarmsToolbar";
 import { TopContaminatedFarmsWidget } from "./components/TopContaminatedFarmsWidget";
+import { ActiveRemediationsWidget } from "./components/ActiveRemediationsWidget";
+import { RemediationHistoryTimeline } from "./components/RemediationHistoryTimeline";
 import { StartRemediationModal } from "./components/StartRemediationModal";
 
 /**
@@ -66,10 +68,14 @@ const Farms = () => {
       )}
 
       <div className="w-full space-y-4">
-        {/* Top Contaminated Farms */}
-        {topContaminatedFarms.length > 0 && (
-          <TopContaminatedFarmsWidget farms={topContaminatedFarms} />
-        )}
+        {/* Widgets Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {topContaminatedFarms.length > 0 && (
+            <TopContaminatedFarmsWidget farms={topContaminatedFarms} />
+          )}
+          <ActiveRemediationsWidget />
+          <RemediationHistoryTimeline maxItems={5} />
+        </div>
 
         {/* Toolbar */}
         <FarmsToolbar
