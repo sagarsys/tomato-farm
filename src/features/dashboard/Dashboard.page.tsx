@@ -5,6 +5,8 @@ import { TopFarmsWidget } from "./components/TopFarmsWidget";
 import { RecentOrdersWidget } from "./components/RecentOrdersWidget";
 import { TrendsChart } from "./components/TrendsChart";
 import { ContaminationTrendsChart } from "./components/ContaminationTrendsChart";
+import { OrderStatusWidget } from "./components/OrderStatusWidget";
+import { TopBuyersSuppliersWidget } from "./components/TopBuyersSuppliersWidget";
 import { useDashboardMetrics } from "./hooks/useDashboardMetrics";
 import { formatCurrency, formatVolume } from "@/lib/format";
 import Loader from "@/components/Loader";
@@ -77,6 +79,12 @@ export function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 md:gap-8">
         <TopFarmsWidget farms={topFarms} />
         <RecentOrdersWidget orders={recentOrders} />
+      </div>
+
+      {/* Order Analytics Row */}
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8">
+        <OrderStatusWidget />
+        <TopBuyersSuppliersWidget />
       </div>
     </div>
   );
