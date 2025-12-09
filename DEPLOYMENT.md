@@ -2,61 +2,41 @@
 
 This project is configured for automatic deployment to Vercel via GitHub Actions.
 
-## 🚀 Quick Setup
+## 🚀 Quick Setup (2 Steps!)
 
-### Step 1: Create a Vercel Account
+### Step 1: Get Vercel Token
 
 1. Go to [vercel.com](https://vercel.com) and sign up (free)
-2. Connect your GitHub account
+2. Go to [vercel.com/account/tokens](https://vercel.com/account/tokens)
+3. Click "Create Token"
+4. Name it (e.g., "github-actions") and copy the token
 
-### Step 2: Create a Vercel Project
+### Step 2: Add GitHub Secret
 
-**Option A: Via Vercel Dashboard (Easiest)**
+1. Go to your GitHub repo → **Settings** → **Secrets and variables** → **Actions**
+2. Click **"New repository secret"**
+3. Add:
+   - **Name:** `VERCEL_TOKEN`
+   - **Value:** Your Vercel token from Step 1
+
+### That's it! 🎉
+
+Push to `main` or `master` → Auto-deploys to production!
+
+The first deploy will automatically create the Vercel project for you.
+
+---
+
+## Alternative: Vercel Dashboard (No GitHub Actions)
+
+If you prefer Vercel's built-in Git integration:
+
 1. Go to [vercel.com/new](https://vercel.com/new)
 2. Import your GitHub repository
-3. Vercel will auto-detect the settings from `vercel.json`
+3. Vercel auto-detects settings from `vercel.json`
 4. Click "Deploy"
 
-**Option B: Via Vercel CLI**
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Login to Vercel
-vercel login
-
-# Link project (run in project root)
-vercel link
-
-# Deploy
-vercel --prod
-```
-
-### Step 3: Get Vercel Credentials for GitHub Actions
-
-1. **Get your Vercel Token:**
-   - Go to [vercel.com/account/tokens](https://vercel.com/account/tokens)
-   - Create a new token with a descriptive name (e.g., "github-actions")
-   - Copy the token
-
-2. **Get Organization ID and Project ID:**
-   - After running `vercel link`, check `.vercel/project.json` file
-   - Or find them in your Vercel dashboard project settings
-
-### Step 4: Add GitHub Secrets
-
-Go to your GitHub repo → Settings → Secrets and variables → Actions
-
-Add these secrets:
-| Secret Name | Value |
-|-------------|-------|
-| `VERCEL_TOKEN` | Your Vercel API token |
-| `VERCEL_ORG_ID` | Your Vercel Organization/Team ID |
-| `VERCEL_PROJECT_ID` | Your Vercel Project ID |
-
-### Step 5: Deploy!
-
-Push to `main` or `master` branch → Auto-deploys to production 🎉
+Vercel will automatically deploy on every push - no GitHub Actions needed!
 
 ## 📋 Deployment Workflow
 

@@ -280,11 +280,12 @@ lostRevenue = sum(contaminatedOrders.revenue)
 
 This project is configured for **automatic deployment to Vercel** via GitHub Actions.
 
-### Quick Start
+### Quick Start (2 Steps)
 
-1. **Create a Vercel account** at [vercel.com](https://vercel.com) (free)
-2. **Import your repo** at [vercel.com/new](https://vercel.com/new)
-3. **Add GitHub secrets** for CI/CD (see [DEPLOYMENT.md](DEPLOYMENT.md))
+1. **Get Vercel token** at [vercel.com/account/tokens](https://vercel.com/account/tokens)
+2. **Add `VERCEL_TOKEN` secret** in GitHub repo settings
+
+That's it! Push to `main` → Auto-deploys to production 🎉
 
 ### Deployment Workflow
 
